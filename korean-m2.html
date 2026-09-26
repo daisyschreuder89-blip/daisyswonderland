@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <title>
+   Korean Through Dramas — Module 2 Flashcards
+  </title>
+  <style>
+   @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;600;800&family=Noto+Sans+SC:wght@400;600&display=swap');
+:root {
+    --ink:#34303a;
+    --paper:#fffaf6;
+    --pink:#f5b9c5;
+    --shadow:0 18px 45px #7e5e6530;
+}
+* {
+    box-sizing:border-box;
+}
+body {
+    margin:0;
+    color:var(--ink);
+    font-family:"Noto Sans KR","Noto Sans SC",sans-serif;
+    background: radial-gradient(circle at 10% 10%,#fbe1e8 0 8%,transparent 24%), radial-gradient(circle at 90% 15%,#e3f4ee 0 8%,transparent 25%), linear-gradient(135deg,#fff9f2,#f7eee8);
+    min-height:100vh;
+}
+.app {
+    max-width:1120px;
+    margin:auto;
+    padding: 55px 18px 60px;
+}
+header {
+    display:flex;
+    gap:20px;
+    align-items:flex-end;
+    justify-content:space-between;
+    flex-wrap:wrap;
+}
+h1 {
+    font-family:Gaegu,cursive;
+    font-size:clamp(38px,6vw,66px);
+    line-height:.9;
+    margin:0;
+}
+.sub {
+    opacity:.68;
+    margin-top:8px;
+}
+.controls {
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+button,select {
+    border:0;
+    border-radius:999px;
+    background:#fff;
+    padding:11px 16px;
+    box-shadow:0 5px 18px #72586620;
+    font:inherit;
+    color:inherit;
+    cursor:pointer;
+}
+button:hover {
+    transform:translateY(-1px);
+}
+button.primary {
+    background:#ef9fb1;
+    color:#fff;
+    font-weight:700;
+}
+.stats {
+    margin:24px 0 12px;
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    font-size:14px;
+}
+.bar {
+    height:9px;
+    background:#ffffffa8;
+    border-radius:99px;
+    overflow:hidden;
+}
+.fill {
+    height:100%;
+    width:0;
+    background:linear-gradient(90deg,#f2a8b9,#d9a6e8);
+    transition:.3s;
+}
+.stage {
+    perspective:1200px;
+    margin:28px auto 18px;
+    max-width:650px;
+}
+.card {
+    height:min(610px,70vh);
+    min-height:500px;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform .55s cubic-bezier(.2,.8,.2,1);
+    cursor:pointer;
+}
+.card.flip {
+    transform:rotateY(180deg);
+}
+.face {
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    border-radius:32px;
+    background:var(--paper);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    border:1px solid #fff;
+}
+.back {
+    transform:rotateY(180deg);
+}
+.ribbon {
+    height:72px;
+    padding:18px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-weight:700;
+}
+.ribbon small {
+    background:#ffffff9c;
+    border-radius:99px;
+    padding:6px 10px;
+}
+.frontBody {
+    height:calc(100% - 72px);
+    display:grid;
+    place-items:center;
+    text-align:center;
+    padding:34px;
+}
+.ko {
+    font-size:clamp(54px,10vw,92px);
+    font-weight:800;
+    letter-spacing:-3px;
+}
+.zh {
+    font-size:25px;
+    margin-top:20px;
+}
+.en {
+    font-size:18px;
+    opacity:.65;
+    margin-top:5px;
+}
+.scene {
+    margin-top:36px;
+    width:min(380px,90%);
+    height:150px;
+    border-radius:25px;
+    background:linear-gradient(135deg,#ffe0e7,#f4d9ef);
+    position:relative;
+    overflow:hidden;
+    display:grid;
+    place-items:center;
+}
+.cat {
+    font-size:75px;
+}
+.bubble {
+    position:absolute;
+    right:16px;
+    top:15px;
+    background:#fff;
+    padding:9px 13px;
+    border-radius:16px;
+    font-family:Gaegu,cursive;
+    font-size:22px;
+    max-width:58%;
+}
+.backBody {
+    padding:34px 42px;
+}
+.back .ko {
+    font-size:54px;
+    text-align:center;
+}
+.meaning {
+    margin:28px 0;
+    background:#fde4e9;
+    padding:18px 20px;
+    border-radius:20px;
+}
+.meaning b {
+    font-size:22px;
+}
+.example {
+    border-top:2px dashed #dcced0;
+    padding-top:24px;
+}
+.example .exko {
+    font-size:27px;
+    font-weight:700;
+}
+.example p {
+    margin:7px 0;
+}
+.tip {
+    margin-top:26px;
+    padding:14px 17px;
+    border-radius:16px;
+    background:#fff1ca;
+    font-size:14px;
+}
+.nav {
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:18px;
+}
+.nav button {
+    min-width:120px;
+}
+.deck {
+    margin-top:32px;
+}
+.deck h2 {
+    font-family:Gaegu,cursive;
+    font-size:34px;
+    margin-bottom:12px;
+}
+.chips {
+    display:flex;
+    gap:8px;
+    overflow:auto;
+    padding:3px 2px 12px;
+}
+.chip {
+    white-space:nowrap;
+}
+.chip.active {
+    outline:3px solid #ffffff;
+    box-shadow:0 0 0 3px #e9a2b2;
+}
+.grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+    gap:10px;
+}
+.mini {
+    background:#fffaf6;
+    border-radius:17px;
+    padding:13px;
+    min-height:105px;
+    box-shadow:0 5px 15px #806a7020;
+    cursor:pointer;
+    border-top:7px solid var(--c);
+}
+.mini b {
+    display:block;
+    font-size:22px;
+}
+.mini span {
+    font-size:12px;
+    opacity:.66;
+}
+footer {
+    text-align:center;
+    margin-top:34px;
+    opacity:.55;
+    font-size:12px;
+}
+.back-button {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    padding: 9px 14px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #555;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.10);
+}
+.back-button:hover {
+    transform: translateY(-2px);
+}
+@media(max-width:600px) {
+    .card {
+        min-height:480px;
+        height:65vh;
+    }
+    .backBody {
+        padding:28px 24px;
+    }
+    .ribbon {
+        height:62px;
+    }
+    .frontBody {
+        height:calc(100% - 62px);
+    }
+    .scene {
+        height:130px;
+    }
+    .ko {
+        font-size:56px;
+    }
+    .nav button {
+        min-width:0;
+        flex:1;
+    }
+}
+  </style>
+ </head>
+ <body>
+  <main class="app">
+   <header>
+    <div>
+     <h1>
+      Korean Through Dramas
+     </h1>
+     <div class="sub">
+      Module 2 
+     </div>
+    </div>
+    <div class="controls">
+     <select id="lesson">
+     </select>
+     <button id="shuffle">
+      Shuffle
+     </button>
+     <button id="reset">
+      Reset
+     </button>
+    </div>
+   </header>
+   <div class="stats">
+    <span id="count">
+    </span>
+    <span>
+     Click the card to flip · ← → to move
+    </span>
+   </div>
+   <div class="bar">
+    <div class="fill" id="fill">
+    </div>
+   </div>
+   <section class="stage">
+    <div class="card" id="card">
+     <div class="face front">
+      <div class="ribbon" id="rib1">
+       <span id="cat1">
+       </span>
+       <small id="lesson1">
+       </small>
+      </div>
+      <div class="frontBody">
+       <div>
+        <div class="ko" id="ko1">
+        </div>
+        <div class="zh" id="zh1">
+        </div>
+        <div class="en" id="en1">
+        </div>
+        <div class="scene">
+         <div class="cat">
+          🐱
+         </div>
+         <div class="bubble" id="bubble">
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="face back">
+      <div class="ribbon" id="rib2">
+       <span>
+        Answer &amp; context
+       </span>
+       <small id="lesson2">
+       </small>
+      </div>
+      <div class="backBody">
+       <div class="ko" id="ko2">
+       </div>
+       <div class="meaning">
+        <b id="zh2">
+        </b>
+        <div id="en2">
+        </div>
+       </div>
+       <div class="example">
+        <div class="exko" id="exko">
+        </div>
+        <p id="exzh">
+        </p>
+        <p id="exen">
+        </p>
+       </div>
+       <div class="tip" id="tip">
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+   <div class="nav">
+    <button id="prev">
+     ← Previous
+    </button>
+    <button class="primary" id="flip">
+     Flip card
+    </button>
+    <button id="next">
+     Next →
+    </button>
+   </div>
+   <section class="deck">
+    <h2>
+     Module 2 Deck
+    </h2>
+    <div class="chips" id="chips">
+    </div>
+    <div class="grid" id="grid">
+    </div>
+   </section>
+   <button class="back-button" onclick="window.location.href='korean.html'">
+    ← Korean Drawers
+   </button>
+   <footer>
+    Works offline after the page and Google fonts are cached. No framework or server required.
+   </footer>
+  </main>
+
+<script>
+// ============================================================
+// FLASHCARD DATA
+// Edit vocabulary and examples here.
+// ============================================================
+const cards = [
+  {
+    "lesson": "L1",
+    "category": "Questions & Reactions",
+    "ko": "진짜?",
+    "zh": "真的？",
+    "en": "Really?",
+    "exko": "진짜야.",
+    "exzh": "是真的。",
+    "exen": "It’s true."
+  },
+  {
+    "lesson": "L1",
+    "category": "Questions & Reactions",
+    "ko": "설마…",
+    "zh": "不会吧……",
+    "en": "No way…",
+    "exko": "설마 진짜야?",
+    "exzh": "不会是真的吧？",
+    "exen": "No way, is it true?"
+  },
+  {
+    "lesson": "L1",
+    "category": "Questions & Reactions",
+    "ko": "맞아",
+    "zh": "对 / 没错",
+    "en": "Right",
+    "exko": "응, 맞아.",
+    "exzh": "嗯，对。",
+    "exen": "Yeah, that’s right."
+  },
+  {
+    "lesson": "L1",
+    "category": "Questions & Reactions",
+    "ko": "아니",
+    "zh": "不是 / 不",
+    "en": "No / actually…",
+    "exko": "아니, 왜 그래?",
+    "exzh": "不是，你怎么了？",
+    "exen": "No—what’s wrong?"
+  },
+  {
+    "lesson": "L1",
+    "category": "Questions & Reactions",
+    "ko": "진짜야",
+    "zh": "是真的",
+    "en": "It’s true",
+    "exko": "응, 진짜야.",
+    "exzh": "嗯，是真的。",
+    "exen": "Yeah, it’s true."
+  },
+  {
+    "lesson": "L1",
+    "category": "Questions & Reactions",
+    "ko": "진짜 왜 그래?",
+    "zh": "你到底怎么了？",
+    "en": "Seriously, what’s wrong?",
+    "exko": "진짜 왜 그래?",
+    "exzh": "你到底怎么回事？",
+    "exen": "Seriously, what’s wrong?"
+  },
+  {
+    "lesson": "L2",
+    "category": "Know / Don’t Know",
+    "ko": "알아",
+    "zh": "知道",
+    "en": "I know",
+    "exko": "응, 알아.",
+    "exzh": "嗯，我知道。",
+    "exen": "Yeah, I know."
+  },
+  {
+    "lesson": "L2",
+    "category": "Know / Don’t Know",
+    "ko": "몰라",
+    "zh": "不知道",
+    "en": "I don’t know",
+    "exko": "나도 몰라.",
+    "exzh": "我也不知道。",
+    "exen": "I don’t know either."
+  },
+  {
+    "lesson": "L2",
+    "category": "Know / Don’t Know",
+    "ko": "알았어",
+    "zh": "知道了 / 明白了",
+    "en": "Got it",
+    "exko": "응, 알았어.",
+    "exzh": "嗯，知道了。",
+    "exen": "Okay, got it."
+  },
+  {
+    "lesson": "L2",
+    "category": "Know / Don’t Know",
+    "ko": "모르겠어",
+    "zh": "搞不清楚 / 不确定",
+    "en": "I’m not sure",
+    "exko": "나도 모르겠어.",
+    "exzh": "我也不知道。",
+    "exen": "I’m not sure either."
+  },
+  {
+    "lesson": "L2",
+    "category": "Know / Don’t Know",
+    "ko": "응",
+    "zh": "嗯",
+    "en": "Yeah / yes (casual)",
+    "exko": "응, 알아.",
+    "exzh": "嗯，我知道。",
+    "exen": "Yeah, I know."
+  },
+  {
+    "lesson": "L3",
+    "category": "Question Words",
+    "ko": "뭐",
+    "zh": "什么",
+    "en": "What",
+    "exko": "뭐 해?",
+    "exzh": "干嘛呢？",
+    "exen": "What are you doing?"
+  },
+  {
+    "lesson": "L3",
+    "category": "Question Words",
+    "ko": "왜",
+    "zh": "为什么",
+    "en": "Why",
+    "exko": "왜 그래?",
+    "exzh": "怎么了？",
+    "exen": "What’s wrong?"
+  },
+  {
+    "lesson": "L3",
+    "category": "Question Words",
+    "ko": "어디",
+    "zh": "哪里",
+    "en": "Where",
+    "exko": "어디 가?",
+    "exzh": "去哪儿？",
+    "exen": "Where are you going?"
+  },
+  {
+    "lesson": "L3",
+    "category": "Question Words",
+    "ko": "누구",
+    "zh": "谁",
+    "en": "Who",
+    "exko": "누구야?",
+    "exzh": "谁啊？",
+    "exen": "Who is it?"
+  },
+  {
+    "lesson": "L3",
+    "category": "Question Words",
+    "ko": "뭐 해?",
+    "zh": "干嘛呢？",
+    "en": "What are you doing?",
+    "exko": "지금 뭐 해?",
+    "exzh": "现在干嘛呢？",
+    "exen": "What are you doing now?"
+  },
+  {
+    "lesson": "L3",
+    "category": "Question Words",
+    "ko": "왜 그래?",
+    "zh": "怎么了？/ 干嘛这样？",
+    "en": "What’s wrong?",
+    "exko": "진짜 왜 그래?",
+    "exzh": "你到底怎么了？",
+    "exen": "Seriously, what’s wrong?"
+  },
+  {
+    "lesson": "L3",
+    "category": "Question Words",
+    "ko": "어디 가?",
+    "zh": "去哪儿？",
+    "en": "Where are you going?",
+    "exko": "집에 가.",
+    "exzh": "回家。",
+    "exen": "I’m going home."
+  },
+  {
+    "lesson": "L3",
+    "category": "Question Words",
+    "ko": "누구야?",
+    "zh": "谁啊？",
+    "en": "Who is it?",
+    "exko": "저 사람 누구야?",
+    "exzh": "那个人是谁？",
+    "exen": "Who is that person?"
+  },
+  {
+    "lesson": "L3",
+    "category": "Question Words",
+    "ko": "뭐 먹어?",
+    "zh": "吃什么？",
+    "en": "What are you eating?",
+    "exko": "밥 먹어?",
+    "exzh": "吃饭吗？",
+    "exen": "Are you eating?"
+  },
+  {
+    "lesson": "L4",
+    "category": "OK / No / It’s Fine",
+    "ko": "괜찮아",
+    "zh": "没事 / 还好 / 可以",
+    "en": "It’s okay",
+    "exko": "응, 괜찮아.",
+    "exzh": "嗯，没事。",
+    "exen": "Yeah, I’m okay."
+  },
+  {
+    "lesson": "L4",
+    "category": "OK / No / It’s Fine",
+    "ko": "괜찮아?",
+    "zh": "没事吧？",
+    "en": "Are you okay?",
+    "exko": "괜찮아?",
+    "exzh": "你没事吧？",
+    "exen": "Are you okay?"
+  },
+  {
+    "lesson": "L4",
+    "category": "OK / No / It’s Fine",
+    "ko": "괜찮아요",
+    "zh": "没事 / 可以（礼貌）",
+    "en": "It’s okay (polite)",
+    "exko": "네, 괜찮아요.",
+    "exzh": "嗯，没事。",
+    "exen": "Yes, I’m okay."
+  },
+  {
+    "lesson": "L4",
+    "category": "OK / No / It’s Fine",
+    "ko": "돼",
+    "zh": "可以 / 行",
+    "en": "Okay / can",
+    "exko": "응, 돼.",
+    "exzh": "嗯，可以。",
+    "exen": "Yeah, that works."
+  },
+  {
+    "lesson": "L4",
+    "category": "OK / No / It’s Fine",
+    "ko": "안 돼",
+    "zh": "不行 / 不可以",
+    "en": "No / can’t",
+    "exko": "안 돼!",
+    "exzh": "不行！",
+    "exen": "No!"
+  },
+  {
+    "lesson": "L4",
+    "category": "OK / No / It’s Fine",
+    "ko": "됐어",
+    "zh": "行了 / 算了 / 不用了",
+    "en": "Enough / never mind",
+    "exko": "됐어. 괜찮아.",
+    "exzh": "算了，没事。",
+    "exen": "Never mind. It’s okay."
+  },
+  {
+    "lesson": "L4",
+    "category": "OK / No / It’s Fine",
+    "ko": "안 가",
+    "zh": "不去",
+    "en": "I’m not going",
+    "exko": "나 안 가.",
+    "exzh": "我不去。",
+    "exen": "I’m not going."
+  },
+  {
+    "lesson": "L4",
+    "category": "OK / No / It’s Fine",
+    "ko": "안 먹어",
+    "zh": "不吃",
+    "en": "I’m not eating",
+    "exko": "나 안 먹어.",
+    "exzh": "我不吃。",
+    "exen": "I’m not eating."
+  },
+  {
+    "lesson": "L4",
+    "category": "OK / No / It’s Fine",
+    "ko": "안 와?",
+    "zh": "不来吗？",
+    "en": "Aren’t you coming?",
+    "exko": "오늘 안 와?",
+    "exzh": "今天不来吗？",
+    "exen": "Aren’t you coming today?"
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "미안해",
+    "zh": "对不起（casual）",
+    "en": "Sorry",
+    "exko": "미안해. 늦었어.",
+    "exzh": "对不起，我迟到了。",
+    "exen": "Sorry. I’m late."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "미안해요",
+    "zh": "对不起（礼貌）",
+    "en": "Sorry (polite)",
+    "exko": "미안해요.",
+    "exzh": "对不起。",
+    "exen": "I’m sorry."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "죄송합니다",
+    "zh": "对不起（正式）",
+    "en": "I’m sorry (formal)",
+    "exko": "정말 죄송합니다.",
+    "exzh": "真的很抱歉。",
+    "exen": "I’m very sorry."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "고마워",
+    "zh": "谢谢（casual）",
+    "en": "Thanks",
+    "exko": "응, 고마워.",
+    "exzh": "嗯，谢谢。",
+    "exen": "Yeah, thanks."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "고마워요",
+    "zh": "谢谢（礼貌）",
+    "en": "Thank you (polite)",
+    "exko": "정말 고마워요.",
+    "exzh": "真的谢谢你。",
+    "exen": "Thank you so much."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "감사합니다",
+    "zh": "谢谢（正式）",
+    "en": "Thank you (formal)",
+    "exko": "감사합니다.",
+    "exzh": "谢谢。",
+    "exen": "Thank you."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "제발",
+    "zh": "拜托 / 求你了",
+    "en": "Please",
+    "exko": "제발 가지 마.",
+    "exzh": "求你别走。",
+    "exen": "Please don’t go."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "잠깐만",
+    "zh": "等一下",
+    "en": "Wait a second",
+    "exko": "잠깐만. 가지 마.",
+    "exzh": "等一下，别走。",
+    "exen": "Wait. Don’t go."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "잠깐만요",
+    "zh": "等一下（礼貌）",
+    "en": "One moment, please",
+    "exko": "잠깐만요.",
+    "exzh": "请等一下。",
+    "exen": "One moment, please."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "가지 마",
+    "zh": "别走 / 别去",
+    "en": "Don’t go",
+    "exko": "제발 가지 마.",
+    "exzh": "求你别走。",
+    "exen": "Please don’t go."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "하지 마",
+    "zh": "别做 / 不要这样",
+    "en": "Don’t do it",
+    "exko": "하지 마.",
+    "exzh": "别这样。",
+    "exen": "Don’t do that."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "먹지 마",
+    "zh": "别吃",
+    "en": "Don’t eat",
+    "exko": "그거 먹지 마.",
+    "exzh": "别吃那个。",
+    "exen": "Don’t eat that."
+  },
+  {
+    "lesson": "L5",
+    "category": "Sorry / Thanks / Please",
+    "ko": "보지 마",
+    "zh": "别看",
+    "en": "Don’t look",
+    "exko": "보지 마!",
+    "exzh": "别看！",
+    "exen": "Don’t look!"
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "가",
+    "zh": "去",
+    "en": "Go",
+    "exko": "집에 가.",
+    "exzh": "回家。",
+    "exen": "I’m going home."
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "와",
+    "zh": "来",
+    "en": "Come",
+    "exko": "이리 와.",
+    "exzh": "过来。",
+    "exen": "Come here."
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "먹어",
+    "zh": "吃",
+    "en": "Eat",
+    "exko": "밥 먹어.",
+    "exzh": "吃饭吧。",
+    "exen": "Eat."
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "봐",
+    "zh": "看",
+    "en": "Look / watch",
+    "exko": "이거 봐.",
+    "exzh": "看这个。",
+    "exen": "Look at this."
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "자",
+    "zh": "睡",
+    "en": "Sleep",
+    "exko": "이제 자.",
+    "exzh": "现在睡吧。",
+    "exen": "Go to sleep now."
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "가?",
+    "zh": "去吗？/ 要走？",
+    "en": "Going?",
+    "exko": "벌써 가?",
+    "exzh": "这么快就走？",
+    "exen": "Leaving already?"
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "이리 와",
+    "zh": "过来",
+    "en": "Come here",
+    "exko": "이리 와.",
+    "exzh": "过来。",
+    "exen": "Come here."
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "빨리 와",
+    "zh": "快点来",
+    "en": "Come quickly",
+    "exko": "빨리 와!",
+    "exzh": "快点来！",
+    "exen": "Come quickly!"
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "밥 먹어",
+    "zh": "吃饭",
+    "en": "Eat",
+    "exko": "같이 밥 먹어.",
+    "exzh": "一起吃饭吧。",
+    "exen": "Let’s eat together."
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "밥 먹어?",
+    "zh": "吃饭吗？/ 要吃吗？",
+    "en": "Are you eating?",
+    "exko": "밥 먹어?",
+    "exzh": "要吃饭吗？",
+    "exen": "Want to eat?"
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "봐!",
+    "zh": "看！",
+    "en": "Look!",
+    "exko": "이거 봐!",
+    "exzh": "看这个！",
+    "exen": "Look at this!"
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "봐봐",
+    "zh": "你看看 / 看看嘛",
+    "en": "Have a look",
+    "exko": "이거 봐봐.",
+    "exzh": "你看看这个。",
+    "exen": "Take a look at this."
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "이제 자",
+    "zh": "现在睡吧",
+    "en": "Go to sleep now",
+    "exko": "피곤해? 이제 자.",
+    "exzh": "累了？睡吧。",
+    "exen": "Tired? Go to sleep."
+  },
+  {
+    "lesson": "L6",
+    "category": "Common Action Verbs",
+    "ko": "잘 자",
+    "zh": "晚安 / 好好睡",
+    "en": "Sleep well",
+    "exko": "응, 잘 자.",
+    "exzh": "嗯，晚安。",
+    "exen": "Yeah, sleep well."
+  },
+  {
+    "lesson": "L7",
+    "category": "Like / Dislike",
+    "ko": "좋아",
+    "zh": "好 / 不错 / 好啊",
+    "en": "Good / sounds good",
+    "exko": "좋아!",
+    "exzh": "好啊！",
+    "exen": "Sounds good!"
+  },
+  {
+    "lesson": "L7",
+    "category": "Like / Dislike",
+    "ko": "좋아해",
+    "zh": "喜欢",
+    "en": "Like",
+    "exko": "나 너 좋아해.",
+    "exzh": "我喜欢你。",
+    "exen": "I like you."
+  },
+  {
+    "lesson": "L7",
+    "category": "Like / Dislike",
+    "ko": "싫어",
+    "zh": "不喜欢 / 不要 / 讨厌",
+    "en": "Don’t like / no",
+    "exko": "싫어!",
+    "exzh": "不要！",
+    "exen": "No!"
+  },
+  {
+    "lesson": "L7",
+    "category": "Like / Dislike",
+    "ko": "싫어해",
+    "zh": "不喜欢 / 讨厌某人某物",
+    "en": "Dislike",
+    "exko": "나 싫어해?",
+    "exzh": "你不喜欢我吗？",
+    "exen": "Do you dislike me?"
+  },
+  {
+    "lesson": "L7",
+    "category": "Like / Dislike",
+    "ko": "이거 좋아.",
+    "zh": "这个不错 / 这个好",
+    "en": "This is good",
+    "exko": "응, 이거 좋아.",
+    "exzh": "嗯，这个不错。",
+    "exen": "Yeah, this is good."
+  },
+  {
+    "lesson": "L7",
+    "category": "Like / Dislike",
+    "ko": "이거 좋아해.",
+    "zh": "我喜欢这个",
+    "en": "I like this",
+    "exko": "나 이거 좋아해.",
+    "exzh": "我喜欢这个。",
+    "exen": "I like this."
+  },
+  {
+    "lesson": "L7",
+    "category": "Like / Dislike",
+    "ko": "커피 좋아해?",
+    "zh": "喜欢咖啡吗？",
+    "en": "Do you like coffee?",
+    "exko": "응, 좋아해.",
+    "exzh": "嗯，喜欢。",
+    "exen": "Yeah, I do."
+  },
+  {
+    "lesson": "L7",
+    "category": "Like / Dislike",
+    "ko": "나 좋아해?",
+    "zh": "你喜欢我吗？",
+    "en": "Do you like me?",
+    "exko": "나 좋아해?",
+    "exzh": "你喜欢我吗？",
+    "exen": "Do you like me?"
+  },
+  {
+    "lesson": "L7",
+    "category": "Like / Dislike",
+    "ko": "나 싫어해?",
+    "zh": "你不喜欢我吗？",
+    "en": "Do you dislike me?",
+    "exko": "나 싫어해?",
+    "exzh": "你讨厌我吗？",
+    "exen": "Do you dislike me?"
+  },
+  {
+    "lesson": "L7",
+    "category": "Like / Dislike",
+    "ko": "나도 좋아해.",
+    "zh": "我也喜欢 / 我也喜欢你",
+    "en": "I like you too",
+    "exko": "나도 좋아해.",
+    "exzh": "我也喜欢你。",
+    "exen": "I like you too."
+  },
+  {
+    "lesson": "L7",
+    "category": "Like / Dislike",
+    "ko": "도",
+    "zh": "也",
+    "en": "Also / too",
+    "exko": "나도 몰라.",
+    "exzh": "我也不知道。",
+    "exen": "I don’t know either."
+  },
+  {
+    "lesson": "L8",
+    "category": "Review & Extras",
+    "ko": "집",
+    "zh": "家",
+    "en": "Home",
+    "exko": "집에 가.",
+    "exzh": "回家。",
+    "exen": "I’m going home."
+  },
+  {
+    "lesson": "L8",
+    "category": "Review & Extras",
+    "ko": "벌써",
+    "zh": "已经 / 这么快就",
+    "en": "Already / so soon",
+    "exko": "벌써 가?",
+    "exzh": "这么快就走？",
+    "exen": "Leaving already?"
+  },
+  {
+    "lesson": "L8",
+    "category": "Review & Extras",
+    "ko": "피곤해",
+    "zh": "累了",
+    "en": "I’m tired",
+    "exko": "응. 피곤해.",
+    "exzh": "嗯，累了。",
+    "exen": "Yeah. I’m tired."
+  },
+  {
+    "lesson": "L8",
+    "category": "Review & Extras",
+    "ko": "집에 가.",
+    "zh": "回家。",
+    "en": "I’m going home",
+    "exko": "응, 집에 가.",
+    "exzh": "嗯，我回家。",
+    "exen": "Yeah, I’m going home."
+  },
+  {
+    "lesson": "L8",
+    "category": "Review & Extras",
+    "ko": "응. 피곤해.",
+    "zh": "嗯，累了。",
+    "en": "Yeah, I’m tired",
+    "exko": "응. 피곤해.",
+    "exzh": "嗯，累了。",
+    "exen": "Yeah. I’m tired."
+  },
+  {
+    "lesson": "L8",
+    "category": "Review & Extras",
+    "ko": "나 너 좋아해.",
+    "zh": "我喜欢你。",
+    "en": "I like you",
+    "exko": "진짜 좋아해.",
+    "exzh": "真的喜欢你。",
+    "exen": "I really like you."
+  },
+  {
+    "lesson": "L8",
+    "category": "Review & Extras",
+    "ko": "진짜 좋아해.",
+    "zh": "真的喜欢你。",
+    "en": "I really like you",
+    "exko": "나 너 진짜 좋아해.",
+    "exzh": "我真的喜欢你。",
+    "exen": "I really like you."
+  },
+  {
+    "lesson": "L8",
+    "category": "Review & Extras",
+    "ko": "뭐가?",
+    "zh": "什么？/ 什么不知道？",
+    "en": "What?",
+    "exko": "뭐가?",
+    "exzh": "什么？",
+    "exen": "What?"
+  },
+  {
+    "lesson": "L8",
+    "category": "Review & Extras",
+    "ko": "나도 모르겠어.",
+    "zh": "我也不知道 / 搞不清楚",
+    "en": "I’m not sure either",
+    "exko": "나도 모르겠어.",
+    "exzh": "我也不知道。",
+    "exen": "I’m not sure either."
+  }
+];
+// ============================================================
+// LESSON COLORS & TIPS
+// ============================================================
+const colors={L1:"#9fd7f4",L2:"#bcebd7",L3:"#f4c4d0",L4:"#f8dfa0",L5:"#efb6d8",L6:"#ffc58e",L7:"#d9b6ee",L8:"#b7c9ff"};
+const tips={L1:"Reaction words: recognize the whole shape instead of sounding out every letter.",L2:"알아 / 몰라 are extremely common spoken chunks.",L3:"Korean question words stay in the normal sentence position.",L4:"안 = ‘not’. 됐어 changes meaning with context and tone.",L5:"-지 마 = ‘don’t…’. Treat it as a high-value listening pattern.",L6:"Train these as whole visual chunks: 가 · 와 · 먹어 · 봐 · 자.",L7:"좋아 = good; 좋아해 = like. 싫어 / 싫어해 overlap more in everyday meaning.",L8:"Review: let context fill in subjects and objects that Korean leaves out."};
+// ============================================================
+// APP LOGIC
+// Normally you do not need to edit below this point.
+// ============================================================
+let pool = [...cards];
+let i = 0;
+let filter = "ALL";
+const $ = (id) => document.getElementById(id);
+function options(){ $("lesson").innerHTML='<option value="ALL">All lessons</option>'+[...new Set(cards.map(x=>x.lesson))].map(x=>`<option>${x}</option>`).join("");}
+function render(){
+ let c=pool[i]; if(!c)return;
+ $("card").classList.remove("flip"); ["rib1","rib2"].forEach(x=>$(x).style.background=colors[c.lesson]);
+ $("cat1").textContent=c.category; $("lesson1").textContent=$("lesson2").textContent=c.lesson;
+ $("ko1").textContent=$("ko2").textContent=c.ko; $("zh1").textContent=$("zh2").textContent=c.zh; $("en1").textContent=$("en2").textContent=c.en;
+ $("bubble").textContent=c.ko; $("exko").textContent=c.exko; $("exzh").textContent=c.exzh; $("exen").textContent=c.exen; $("tip").textContent=tips[c.lesson];
+ $("count").textContent=`${i+1} / ${pool.length}`; $("fill").style.width=((i+1)/pool.length*100)+"%";
+ drawGrid();
+}
+function drawGrid(){
+ $("grid").innerHTML=pool.map((c,n)=>`<div class="mini" style="--c:${colors[c.lesson]}" data-n="${n}"><b>${c.ko}</b><span>${c.zh}</span></div>`).join("");
+ document.querySelectorAll(".mini").forEach(el=>el.onclick=()=>{i=+el.dataset.n;render();scrollTo({top:0,behavior:"smooth"})});
+}
+function drawChips(){
+ $("chips").innerHTML=["ALL","L1","L2","L3","L4","L5","L6","L7","L8"].map(x=>`<button class="chip ${filter===x?"active":""}" data-f="${x}">${x==="ALL"?"All":x}</button>`).join("");
+ document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>setFilter(b.dataset.f));
+}
+function setFilter(f){filter=f; pool=f==="ALL"?[...cards]:cards.filter(x=>x.lesson===f);i=0;$("lesson").value=f;drawChips();render()}
+$("card").onclick=()=>$("card").classList.toggle("flip"); $("flip").onclick=()=>$("card").classList.toggle("flip");
+$("next").onclick=()=>{i=(i+1)%pool.length;render()}; $("prev").onclick=()=>{i=(i-1+pool.length)%pool.length;render()};
+$("shuffle").onclick=()=>{pool.sort(()=>Math.random()-.5);i=0;render()}; $("reset").onclick=()=>setFilter("ALL");
+$("lesson").onchange=e=>setFilter(e.target.value);
+document.onkeydown=e=>{if(e.key==="ArrowRight")$("next").click();if(e.key==="ArrowLeft")$("prev").click();if(e.key===" "){e.preventDefault();$("flip").click()}};
+options();drawChips();render();
+</script>
+</body>
+</html>
