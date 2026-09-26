@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fff5f8, #eaf4ff);
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        nav {
+            padding: 18px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.88);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        nav a {
+            display: inline-block;
+            margin: 6px 12px;
+            color: #40566f;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        nav a:hover {
+            color: #d66b91;
+        }
+
+        main {
+            width: 90%;
+            max-width: 900px;
+            margin: 10px auto;
+            padding: 12px;
+            text-align: center;
+
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 42px;
+            color: #d66b91;
+        }
+
+        .subtitle {
+            margin: 0 0 26px;
+            font-size: 20px;
+            color: #40566f;
+        }
+
+        .album {
+            position: relative;
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 22px;
+            background: #f7eef2;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+            touch-action: pan-y;
+        }
+
+        .album-photo {
+            display: block;
+            width: 100%;
+            height: min(62vh, 570px);
+            object-fit: contain;
+            background: #f7eef2;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 54px;
+            height: 54px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.88);
+            color: #40566f;
+            font-size: 34px;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        }
+
+        .arrow:hover {
+            background: #ffd6e7;
+        }
+
+        .arrow:focus-visible {
+            outline: 3px solid #5279a3;
+            outline-offset: 3px;
+        }
+
+        .previous {
+            left: 16px;
+        }
+
+        .next {
+            right: 16px;
+        }
+
+        .photo-info {
+            margin: 18px 0 0;
+            font-size: 17px;
+            color: #40566f;
+        }
+
+        .hint {
+            margin: 8px 0 0;
+            font-size: 14px;
+            color: #66788c;
+        }
+
+
+
+        @media (max-width: 700px) {
+            main {
+                width: 94%;
+                margin: 28px auto;
+                padding: 26px 14px;
+            }
+
+            h1 {
+                font-size: 34px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+            }
+
+            .album-photo {
+                height: 55vh;
+            }
+
+            .arrow {
+                width: 46px;
+                height: 46px;
+                font-size: 29px;
+            }
+
+            .previous {
+                left: 9px;
+            }
+
+            .next {
+                right: 9px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main>
+        <h1>📸 Maomao & Mangos 📸</h1>
+        <section class="album" id="album" aria-label="Cat café photo album">
+            <img class="album-photo" id="albumPhoto" src="gallery1.jpg" alt="Cat café gallery photo 1">
+
+            <button class="arrow previous" id="previousButton" type="button" aria-label="Previous photo">‹</button>
+            <button class="arrow next" id="nextButton" type="button" aria-label="Next photo">›</button>
+        </section>
+
+        <p class="photo-info" id="photoInfo" aria-live="polite">Photo 1 of 4</p>
+
+    </main>
+
+    <script>
+        // Name your files gallery1.jpg, gallery2.jpg, gallery3.jpg, and so on.
+        // Change this number to the total number of photos in the album.
+        const totalPhotos = 4;
+
+        let currentPhoto = 1;
+        let touchStartX = 0;
+
+        const album = document.getElementById("album");
+        const albumPhoto = document.getElementById("albumPhoto");
+        const photoInfo = document.getElementById("photoInfo");
+        const previousButton = document.getElementById("previousButton");
+        const nextButton = document.getElementById("nextButton");
+
+        function showPhoto(photoNumber) {
+            if (photoNumber < 1) {
+                currentPhoto = totalPhotos;
+            } else if (photoNumber > totalPhotos) {
+                currentPhoto = 1;
+            } else {
+                currentPhoto = photoNumber;
+            }
+
+            albumPhoto.src = `gallery${currentPhoto}.jpg`;
+            albumPhoto.alt = `Cat café gallery photo ${currentPhoto}`;
+            photoInfo.textContent = `Photo ${currentPhoto} of ${totalPhotos}`;
+
+            preloadNearbyPhotos();
+        }
+
+        function preloadNearbyPhotos() {
+            const nextPhoto = currentPhoto === totalPhotos ? 1 : currentPhoto + 1;
+            const previousPhoto = currentPhoto === 1 ? totalPhotos : currentPhoto - 1;
+
+            new Image().src = `gallery${nextPhoto}.jpg`;
+            new Image().src = `gallery${previousPhoto}.jpg`;
+        }
+
+        function showPreviousPhoto() {
+            showPhoto(currentPhoto - 1);
+        }
+
+        function showNextPhoto() {
+            showPhoto(currentPhoto + 1);
+        }
+
+        previousButton.addEventListener("click", showPreviousPhoto);
+        nextButton.addEventListener("click", showNextPhoto);
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "ArrowLeft") {
+                showPreviousPhoto();
+            }
+
+            if (event.key === "ArrowRight") {
+                showNextPhoto();
+            }
+        });
+
+        album.addEventListener("touchstart", function (event) {
+            touchStartX = event.changedTouches[0].clientX;
+        }, { passive: true });
+
+        album.addEventListener("touchend", function (event) {
+            const touchEndX = event.changedTouches[0].clientX;
+            const swipeDistance = touchEndX - touchStartX;
+
+            if (swipeDistance > 50) {
+                showPreviousPhoto();
+            } else if (swipeDistance < -50) {
+                showNextPhoto();
+            }
+        }, { passive: true });
+
+        showPhoto(1);
+    </script>
+</body>
+
+</html>

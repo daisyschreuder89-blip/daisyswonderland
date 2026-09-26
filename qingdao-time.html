@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Nanaimo and Qingdao Time</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 12px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffeaf2, #e8f3ff);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    .clock-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .clock-card {
+      width: 50%;
+      padding: 12px 8px;
+      background: rgba(255, 255, 255, 0.88);
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .clock-card h2 {
+      margin: 0 0 5px;
+      font-size: 18px;
+    }
+
+    .clock {
+      margin: 0;
+      font-size: 23px;
+      font-weight: bold;
+    }
+
+    .mom-status {
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    #status-emoji {
+      margin-bottom: 5px;
+      font-size: 34px;
+    }
+
+    .status-line {
+      margin: 4px 0;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    #javascript-status {
+      margin-top: 8px;
+      padding: 6px;
+      border-radius: 8px;
+      background-color: #252525;
+      color: #8fffa1;
+      font-family: Consolas, monospace;
+      font-size: 14px;
+    }
+.home-button {
+      position: absolute;
+      top: 30px;
+      right: 20px;
+    }
+
+    .home-button img {
+      width: 70px;
+      height: auto;
+      display: block;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+.home-button:hover img {
+    transform: scale(1.08);
+    filter: brightness(1.15);
+}
+
+    @media (max-width: 420px) {
+      body {
+        padding: 8px;
+      }
+
+      .clock-card h2 {
+        font-size: 16px;
+      }
+
+      .clock {
+        font-size: 19px;
+      }
+
+      .status-line {
+        font-size: 14px;
+      }
+
+      #status-emoji {
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="page">
+
+    <div class="clock-container">
+
+      <div class="clock-card">
+        <h2>🏡 Nanaimo</h2>
+        <p id="nanaimo-time" class="clock"></p>
+      </div>
+
+      <div class="clock-card">
+        <h2>🌊 Qingdao</h2>
+        <p id="qingdao-time" class="clock"></p>
+      </div>
+
+    </div>
+
+    <div class="mom-status">
+
+      <div id="status-emoji"></div>
+
+      <p id="chinese-status" class="status-line"></p>
+      <p id="english-status" class="status-line"></p>
+      <p id="spanish-status" class="status-line"></p>
+      <p id="korean-status" class="status-line"></p>
+      <p id="javascript-status"></p>
+
+    </div>
+    
+
+  </main>
+
+  <script>
+    function updateTimes() {
+      const now = new Date();
+
+      const nanaimoTime = now.toLocaleTimeString("en-CA", {
+        timeZone: "America/Vancouver",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+
+      const qingdaoTime = now.toLocaleTimeString("en-CA", {
+        timeZone: "Asia/Shanghai",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+
+      document.getElementById("nanaimo-time").textContent =
+        nanaimoTime;
+
+      document.getElementById("qingdao-time").textContent =
+        qingdaoTime;
+
+      const qingdaoHour = Number(
+        now.toLocaleString("en-US", {
+          timeZone: "Asia/Shanghai",
+          hour: "numeric",
+          hour12: false
+        })
+      );
+
+      // Awake from 6:00 AM until 8:59 PM
+      const momIsAwake =
+        qingdaoHour >= 6 && qingdaoHour < 21;
+
+      if (momIsAwake) {
+        document.getElementById("status-emoji").textContent =
+          "🌸☀️😊";
+
+        document.getElementById("chinese-status").textContent =
+          "🌸 高姐醒着";
+
+        document.getElementById("english-status").textContent =
+          "😊 Mom is awake";
+
+        document.getElementById("spanish-status").textContent =
+          "☀️ Mamá está despierta";
+
+        document.getElementById("korean-status").textContent =
+          "🌼 엄마가 깨어 계세요";
+
+        document.getElementById("javascript-status").textContent =
+          "mom.status = 'awake';";
+      } else {
+        document.getElementById("status-emoji").textContent =
+          "🌙💤😴";
+
+        document.getElementById("chinese-status").textContent =
+          "🌙 高姐睡了";
+
+        document.getElementById("english-status").textContent =
+          "😴 Mom is sleeping";
+
+        document.getElementById("spanish-status").textContent =
+          "💤 Mamá está durmiendo";
+
+        document.getElementById("korean-status").textContent =
+          "🌜 엄마가 자고 있어요";
+
+        document.getElementById("javascript-status").textContent =
+          "mom.status = 'sleeping';";
+      }
+    }
+
+    updateTimes();
+
+    setInterval(updateTimes, 1000);
+    
+  </script>
+
+</body>
+</html>

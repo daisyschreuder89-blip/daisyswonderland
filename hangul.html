@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Korean Hangul Flashcards</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-family: Arial, sans-serif;
+
+      background: linear-gradient(135deg,
+          #f8e8ff,
+          #e4f2ff);
+    }
+
+    .flashcard-app {
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 25px;
+      font-size: 32px;
+    }
+
+    .card {
+      min-height: 330px;
+      padding: 40px 25px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      background-color: white;
+
+      border-radius: 28px;
+
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    #character {
+      margin: 0 0 25px;
+
+      font-size: 90px;
+      font-weight: bold;
+    }
+
+    #word {
+      margin: 0 0 18px;
+
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    #mandarin {
+      margin: 0;
+
+      font-size: 26px;
+    }
+
+    .counter {
+      margin: 20px 0;
+
+      font-size: 17px;
+      color: #555;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    button {
+      padding: 13px 24px;
+
+      border: none;
+      border-radius: 14px;
+
+      font-size: 18px;
+      cursor: pointer;
+
+      background-color: white;
+
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .error-message {
+      color: darkred;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 500px) {
+      h1 {
+        font-size: 27px;
+      }
+
+      .card {
+        min-height: 300px;
+        padding: 30px 20px;
+      }
+
+      #character {
+        font-size: 75px;
+      }
+
+      #word {
+        font-size: 28px;
+      }
+
+      #mandarin {
+        font-size: 23px;
+      }
+
+      button {
+        padding: 12px 18px;
+        font-size: 16px;
+      }
+    }
+    .back-button {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+
+    padding: 9px 14px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.8);
+    color: #555;
+
+    font-size: 14px;
+    cursor: pointer;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.10);
+}
+
+.back-button:hover {
+    transform: translateY(-2px);
+}
+  </style>
+</head>
+
+<body>
+
+  <main class="flashcard-app">
+
+
+    <div class="card" id="card">
+
+      <p id="character">Loading...</p>
+
+      <p id="word"></p>
+
+      <p id="mandarin"></p>
+
+    </div>
+
+    <p class="counter" id="counter">
+      Card 0 of 0
+    </p>
+
+    <div class="buttons">
+
+      <button id="previous-button">
+        ← Previous
+      </button>
+
+      <button id="next-button">
+        Next →
+      </button>
+<button class="back-button" onclick="window.location.href='korean.html'">
+    ← Korean Drawers
+</button>
+    </div>
+
+  </main>
+
+  <script>
+    const cards = [
+
+      {
+        "character": "ㅏ",
+        "word": "아니",
+        "mandarin": "不是"
+      },
+      {
+        "character": "ㅓ",
+        "word": "어머",
+        "mandarin": "天呐"
+      },
+      {
+        "character": "ㅗ",
+        "word": "오빠",
+        "mandarin": "哥哥"
+      },
+      {
+        "character": "ㅜ",
+        "word": "우리",
+        "mandarin": "我们"
+      },
+      {
+        "character": "ㅡ",
+        "word": "그래",
+        "mandarin": "好的"
+      },
+      {
+        "character": "ㅣ",
+        "word": "이자식",
+        "mandarin": "臭小子"
+      },
+      {
+        "character": "ㅐ",
+        "word": "뭐해",
+        "mandarin": "在干嘛"
+      },
+      {
+        "character": "ㅔ",
+        "word": "세계",
+        "mandarin": "世界"
+      },
+      {
+        "character": "ㄱ",
+        "word": "가방",
+        "mandarin": "包"
+      },
+      {
+        "character": "ㄷ",
+        "word": "다리",
+        "mandarin": "腿"
+      },
+      {
+        "character": "ㅅ",
+        "word": "사과",
+        "mandarin": "苹果"
+      },
+      {
+        "character": "ㅂ",
+        "word": "바다",
+        "mandarin": "大海"
+      },
+      {
+        "character": "ㅈ",
+        "word": "자동차",
+        "mandarin": "汽车"
+      },
+      {
+        "character": "ㄲ",
+        "word": "꿈",
+        "mandarin": "梦想"
+      },
+      {
+        "character": "ㄸ",
+        "word": "딸기",
+        "mandarin": "草莓"
+      },
+      {
+        "character": "ㅉ",
+        "word": "짜장면",
+        "mandarin": "炸酱面"
+      },
+      {
+        "character": "ㅃ",
+        "word": "빵",
+        "mandarin": "面包"
+      },
+      {
+        "character": "ㅆ",
+        "word": "싸다",
+        "mandarin": "便宜"
+      },
+      {
+        "character": "ㅋ",
+        "word": "커피",
+        "mandarin": "咖啡"
+      },
+      {
+        "character": "ㅌ",
+        "word": "토마토",
+        "mandarin": "番茄"
+      },
+      {
+        "character": "ㅍ",
+        "word": "포도",
+        "mandarin": "葡萄"
+      },
+      {
+        "character": "ㅊ",
+        "word": "친구",
+        "mandarin": "朋友"
+      },
+      {
+        "character": "ㅎ",
+        "word": "학교",
+        "mandarin": "学校"
+      },
+      {
+        "character": "ㄴ",
+        "word": "나무",
+        "mandarin": "树"
+      },
+      {
+        "character": "ㅁ",
+        "word": "물",
+        "mandarin": "水"
+      },
+      {
+        "character": "ㄹ",
+        "word": "라디오",
+        "mandarin": "收音机"
+      },
+      {
+        "character": "ㅇ",
+        "word": "우유",
+        "mandarin": "牛奶"
+      },
+      {
+        "character": "ㅑ",
+        "word": "야구",
+        "mandarin": "棒球"
+      },
+      {
+        "character": "ㅕ",
+        "word": "여자",
+        "mandarin": "女人"
+      },
+      {
+        "character": "ㅛ",
+        "word": "요일",
+        "mandarin": "星期"
+      },
+      {
+        "character": "ㅠ",
+        "word": "유리",
+        "mandarin": "玻璃"
+      },
+      {
+        "character": "ㅢ",
+        "word": "의사",
+        "mandarin": "医生"
+      },
+      {
+        "character": "ㅒ",
+        "word": "얘",
+        "mandarin": "这孩子"
+      },
+      {
+        "character": "ㅖ",
+        "word": "예요",
+        "mandarin": "be动词"
+      },
+      {
+        "character": "ㅘ",
+        "word": "과자",
+        "mandarin": "零食"
+      },
+      {
+        "character": "ㅝ",
+        "word": "원숭이",
+        "mandarin": "猴子"
+      },
+      {
+        "character": "ㅟ",
+        "word": "위",
+        "mandarin": "上"
+      },
+      {
+        "character": "ㅚ",
+        "word": "외국",
+        "mandarin": "外国"
+      },
+      {
+        "character": "ㅙ",
+        "word": "왜",
+        "mandarin": "为什么"
+      },
+
+      {
+        "character": "ㅞ",
+        "word": "웨딩",
+        "mandarin": "wedding"
+      },
+
+
+    ];
+
+    let currentCardIndex = 0;
+
+
+
+    const characterElement =
+      document.getElementById("character");
+
+    const wordElement =
+      document.getElementById("word");
+
+    const mandarinElement =
+      document.getElementById("mandarin");
+
+    const counterElement =
+      document.getElementById("counter");
+
+    const previousButton =
+      document.getElementById("previous-button");
+
+    const nextButton =
+      document.getElementById("next-button");
+
+
+
+
+
+    function showCard() {
+
+      const currentCard = cards[currentCardIndex];
+
+      characterElement.textContent =
+        currentCard.character;
+
+      wordElement.textContent =
+        currentCard.word;
+
+      mandarinElement.textContent =
+        currentCard.mandarin;
+
+      counterElement.textContent =
+        `Card ${currentCardIndex + 1} of ${cards.length}`;
+
+    }
+
+
+    function showNextCard() {
+
+      currentCardIndex++;
+
+      if (currentCardIndex >= cards.length) {
+        currentCardIndex = 0;
+      }
+
+      showCard();
+
+    }
+
+
+    function showPreviousCard() {
+
+      currentCardIndex--;
+
+      if (currentCardIndex < 0) {
+        currentCardIndex = cards.length - 1;
+      }
+
+      showCard();
+
+    }
+
+
+    nextButton.addEventListener(
+      "click",
+      showNextCard
+    );
+
+
+    previousButton.addEventListener(
+      "click",
+      showPreviousCard
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (event.key === "ArrowRight") {
+          showNextCard();
+        }
+
+        if (event.key === "ArrowLeft") {
+          showPreviousCard();
+        }
+
+      }
+    );
+
+    showCard();
+  </script>
+
+</body>
+
+</html>

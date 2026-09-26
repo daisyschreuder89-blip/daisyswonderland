@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Love Pig</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 8px 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #fff0f6 0%, #ffdbea 100%);
+      color: #5f2940;
+    }
+
+    .love-pig-app {
+    width: min(92vw, 720px);
+    min-height: 0;
+    padding: 18px 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    text-align: center;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 18px 50px rgba(125, 45, 80, 0.15);
+    backdrop-filter: blur(6px);
+}
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+    }
+
+    #counter {
+      margin: 0;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: bold;
+    }
+
+    .pig-stage {
+      position: relative;
+      display: flex;
+      width: 100%;
+      height: 190px;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .pig-button {
+      position: relative;
+      z-index: 3;
+      border: 0;
+      background: transparent;
+      padding: 18px;
+      font-size: clamp(96px, 20vw, 150px);
+      line-height: 1;
+      cursor: pointer;
+      transform: scale(1);
+      transition: transform 180ms ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .pig-button:focus-visible {
+      outline: 4px solid #d94683;
+      outline-offset: 6px;
+      border-radius: 999px;
+    }
+
+    .pig-button.wiggle {
+      animation: pigWiggle 320ms ease;
+    }
+
+    .pig-button.overload {
+      animation: pigOverload 650ms ease forwards;
+    }
+
+    .floating-heart,
+    .explosion-heart {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      top: 50%;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .floating-heart {
+      animation: floatHeart 1100ms ease-out forwards;
+    }
+
+    .explosion-heart {
+      font-size: var(--heart-size);
+      animation: explodeHeart 1250ms cubic-bezier(.15, .7, .25, 1) forwards;
+    }
+
+    .boom {
+      position: absolute;
+      z-index: 6;
+      font-size: clamp(110px, 24vw, 180px);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .boom.show {
+      animation: boomFlash 520ms ease forwards;
+    }
+
+    .piglet {
+      position: absolute;
+      z-index: 5;
+      left: -140px;
+      bottom: 62px;
+      display: none;
+      font-size: clamp(72px, 15vw, 110px);
+    }
+
+    .piglet.walk {
+      display: block;
+      animation: pigletWalk 2200ms ease-out forwards;
+    }
+
+    #message {
+      min-height: 32px;
+      margin: 0;
+      padding: 0 12px;
+      font-size: clamp(1rem, 3vw, 1.25rem);
+      font-weight: bold;
+    }
+
+    #reset {
+      border: 2px solid #f2a7c3;
+      border-radius: 14px;
+      background: white;
+      color: #7a2949;
+      padding: 10px 18px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #reset:hover {
+      background: #fff5f9;
+    }
+
+    #home {
+      border: 2px solid #f2a7c3;
+      border-radius: 14px;
+      background: white;
+      color: #7a2949;
+      padding: 10px 18px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    #home:hover {
+      background: #fff5f9;
+    }
+    @keyframes pigWiggle {
+      0% { rotate: 0deg; }
+      25% { rotate: -8deg; }
+      50% { rotate: 8deg; }
+      75% { rotate: -5deg; }
+      100% { rotate: 0deg; }
+    }
+.button-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+    @keyframes pigOverload {
+      0% {
+        transform: scale(var(--pig-scale));
+      }
+      35% {
+        transform: scale(calc(var(--pig-scale) + .35));
+      }
+      65% {
+        transform: scale(calc(var(--pig-scale) - .08));
+      }
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+    }
+
+    @keyframes floatHeart {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -10%) scale(.7) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform:
+          translate(calc(-50% + var(--float-x)), -135px)
+          scale(1.45)
+          rotate(var(--spin));
+      }
+    }
+
+    @keyframes explodeHeart {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(.25) rotate(0deg);
+      }
+      70% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform:
+          translate(calc(-50% + var(--x)), calc(-50% + var(--y)))
+          scale(1.7)
+          rotate(var(--rotation));
+      }
+    }
+
+    @keyframes boomFlash {
+      0% {
+        opacity: 0;
+        transform: scale(.2);
+      }
+      30% {
+        opacity: 1;
+        transform: scale(1.25);
+      }
+      70% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.7);
+      }
+    }
+
+    @keyframes pigletWalk {
+      0% {
+        left: -140px;
+        transform: translateY(0) rotate(-3deg);
+      }
+      20% {
+        transform: translateY(-8px) rotate(3deg);
+      }
+      40% {
+        transform: translateY(0) rotate(-3deg);
+      }
+      60% {
+        transform: translateY(-8px) rotate(3deg);
+      }
+      80% {
+        transform: translateY(0) rotate(-3deg);
+      }
+      100% {
+        left: calc(50% - 55px);
+        transform: translateY(0) rotate(0deg);
+      }
+    }
+
+   @media (max-width: 500px) {
+    .love-pig-app {
+        width: 94vw;
+        min-height: 0;
+        padding: 18px 14px;
+    }
+
+    .pig-stage {
+        height: 250px;
+    }
+}
+    
+  </style>
+</head>
+ 
+
+<body>
+  <main class="love-pig-app">
+    <h1>Today's Dustin Love</h1>
+
+    <p id="counter" aria-live="polite">❤️ 0</p>
+
+    <div id="stage" class="pig-stage">
+      <button
+        id="pig"
+        class="pig-button"
+        type="button"
+        aria-label="Give the pig love"
+      >
+        🐷
+      </button>
+
+      <div id="boom" class="boom" aria-hidden="true">💥</div>
+      <div id="piglet" class="piglet" aria-hidden="true">🐖</div>
+    </div>
+
+    <p id="message" aria-live="polite">Click the pig's face!</p>
+
+    <div class="button-row">
+    <button id="reset" type="button">Reset</button>
+    
+</div>
+
+   
+  </main>
+
+  <script>
+    const pig = document.getElementById("pig");
+    const stage = document.getElementById("stage");
+    const counter = document.getElementById("counter");
+    const message = document.getElementById("message");
+    const boom = document.getElementById("boom");
+    const piglet = document.getElementById("piglet");
+    const resetButton = document.getElementById("reset");
+
+    let love = 0;
+    let exploded = false;
+
+    const explosionAt = 20;
+    const heartChoices = ["💖", "🩷", "💕", "❤️", "💗"];
+
+    function randomBetween(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function makeFloatingHeart() {
+      const heart = document.createElement("span");
+
+      heart.className = "floating-heart";
+      heart.textContent =
+        heartChoices[Math.floor(Math.random() * heartChoices.length)];
+
+      heart.style.fontSize = `${randomBetween(22, 36)}px`;
+      heart.style.setProperty(
+        "--float-x",
+        `${randomBetween(-80, 80)}px`
+      );
+      heart.style.setProperty(
+        "--spin",
+        `${randomBetween(-50, 50)}deg`
+      );
+
+      stage.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 1150);
+    }
+
+    function makeExplosion() {
+      for (let i = 0; i < 42; i += 1) {
+        const heart = document.createElement("span");
+
+        const angle = randomBetween(0, Math.PI * 2);
+        const distance = randomBetween(100, 250);
+
+        heart.className = "explosion-heart";
+        heart.textContent =
+          heartChoices[Math.floor(Math.random() * heartChoices.length)];
+
+        heart.style.setProperty(
+          "--x",
+          `${Math.cos(angle) * distance}px`
+        );
+
+        heart.style.setProperty(
+          "--y",
+          `${Math.sin(angle) * distance}px`
+        );
+
+        heart.style.setProperty(
+          "--rotation",
+          `${randomBetween(-260, 260)}deg`
+        );
+
+        heart.style.setProperty(
+          "--heart-size",
+          `${randomBetween(22, 46)}px`
+        );
+
+        heart.style.animationDelay =
+          `${randomBetween(0, 150)}ms`;
+
+        stage.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+        }, 1500);
+      }
+    }
+
+    function explodePig() {
+      exploded = true;
+      pig.disabled = true;
+
+      message.textContent = "Too much love!!";
+
+      pig.style.setProperty(
+        "--pig-scale",
+        String(1 + love * 0.035)
+      );
+
+      pig.classList.add("overload");
+
+      setTimeout(() => {
+        boom.classList.add("show");
+        makeExplosion();
+        counter.textContent = "💥 LOVE OVERLOAD 💥";
+      }, 430);
+
+      setTimeout(() => {
+        pig.style.display = "none";
+        piglet.classList.add("walk");
+        message.textContent =
+          "A tiny piglet is ready for more love!";
+      }, 1100);
+    }
+
+    function giveLove() {
+      if (exploded) {
+        return;
+      }
+
+      love += 1;
+
+      counter.textContent = `❤️ ${love}`;
+
+      makeFloatingHeart();
+
+      const scale = Math.min(1 + love * 0.035, 1.7);
+
+      pig.style.transform = `scale(${scale})`;
+
+      pig.classList.remove("wiggle");
+
+      void pig.offsetWidth;
+
+      pig.classList.add("wiggle");
+
+      if (love === 5) {
+        message.textContent = "Aww... happy piggy!";
+      }
+
+      if (love === 10) {
+        message.textContent = "Piggy is getting very loved 🥹";
+      }
+
+      if (love === 16) {
+        message.textContent =
+          "Piggy cannot contain it much longer...";
+      }
+
+      if (love >= explosionAt) {
+        explodePig();
+      }
+    }
+
+    function resetPig() {
+      love = 0;
+      exploded = false;
+
+      counter.textContent = "❤️ 0";
+      message.textContent = "Click the pig's belly!";
+
+      pig.disabled = false;
+      pig.style.display = "";
+      pig.style.opacity = "1";
+      pig.style.transform = "scale(1)";
+
+      pig.classList.remove("wiggle", "overload");
+      boom.classList.remove("show");
+      piglet.classList.remove("walk");
+
+      stage
+        .querySelectorAll(".floating-heart, .explosion-heart")
+        .forEach((heart) => heart.remove());
+    }
+
+    pig.addEventListener("click", giveLove);
+    resetButton.addEventListener("click", resetPig);
+  </script>
+</body>
+</html>

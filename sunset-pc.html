@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sunset Journey</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: #202630;
+  color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 340px;
+  background: #2b3445;
+  border-radius: 22px;
+  padding: 26px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0,0,0,0.4);
+}
+
+h1 {
+  margin-top: 0;
+  color: #ffd166;
+}
+
+.bar {
+  width: 100%;
+  height: 28px;
+  background: #f5d889;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 25px 0;
+}
+
+.fill {
+  height: 100%;
+  width: 0%;
+  background: #111722;
+  transition: width 0.5s;
+}
+
+#mood {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+#countdown {
+  color: #87ceeb;
+  font-size: 20px;
+}
+
+#sunsetTime {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #c7d3e0;
+}
+
+.home-button {
+    position: absolute;
+    top: 35px;
+    right: 15px;
+}
+
+.home-button img {
+    width: 70px;
+    height: auto;
+}
+.home-button:hover img {
+    transform: scale(1.08);
+    filter: brightness(1.15);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>🌅 Sunset Journey</h1>
+
+  <div class="bar">
+    <div class="fill" id="fill"></div>
+  </div>
+
+  <div id="mood">Loading...</div>
+  <div id="countdown">Finding sunset time...</div>
+  <div id="sunsetTime"></div>
+
+
+<script>
+const latitude = 49.1659;
+const longitude = -123.9401;
+
+let sunriseTime;
+let sunsetTime;
+
+async function getSunTimes() {
+  const url = `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0&tzid=America/Vancouver`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+
+  sunriseTime = new Date(data.results.sunrise);
+  sunsetTime = new Date(data.results.sunset);
+
+  updateDashboard();
+}
+
+function updateDashboard() {
+  const now = new Date();
+
+  const totalDaylight = sunsetTime - sunriseTime;
+  const daylightPassed = now - sunriseTime;
+  const daylightLeft = sunsetTime - now;
+
+  let percentPassed;
+
+if (now < sunriseTime || now >= sunsetTime) {
+    percentPassed = 100;   // Night = fully black
+} else {
+    percentPassed = (daylightPassed / totalDaylight) * 100;
+    percentPassed = Math.max(0, Math.min(100, percentPassed));
+}
+
+document.getElementById("fill").style.width = percentPassed + "%";
+
+  if (now < sunriseTime || now >= sunsetTime) {
+
+  document.getElementById("mood").innerHTML = "😄 Perfect.";
+  document.getElementById("countdown").innerHTML = "Enjoy the evening 🌙!";
+
+} else {
+
+  const hours = Math.floor(daylightLeft / (1000 * 60 * 60));
+  const minutes = Math.floor((daylightLeft / (1000 * 60)) % 60);
+  const totalhours = daylightLeft / (1000 * 60 * 60);
+
+  document.getElementById("countdown").innerHTML =
+    `${hours}h ${minutes}m until sunset`;
+
+  if (totalhours > 5) {
+    document.getElementById("mood").innerHTML = "😾 Too much sun.";
+  } else if (totalhours > 3) {
+    document.getElementById("mood").innerHTML = "😐 I'm being patient.";
+  } else if (totalhours > 1) {
+    document.getElementById("mood").innerHTML = "🙂 Almost.";
+  } else {
+    document.getElementById("mood").innerHTML = "😺 So close.";
+  }
+
+}
+
+  document.getElementById("sunsetTime").innerHTML =
+    "Sunset: " + sunsetTime.toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit"
+    });
+}
+
+getSunTimes();
+
+setInterval(updateDashboard, 60000);          
+setInterval(getSunTimes, 6 * 60 * 60 * 1000); // every 6 hours
+</script>
+
+</body>
+</html>

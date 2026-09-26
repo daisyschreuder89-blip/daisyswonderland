@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tonight's Sky — Nanaimo</title>
+  <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+  <style>
+    :root {
+      --bg: #030711;
+      --panel: rgba(8, 16, 31, .82);
+      --line: rgba(255, 255, 255, .13);
+      --text: #f3f0e8;
+      --muted: #aaaeb9;
+      --gold: #f3c76b;
+      --blue: #79b9ee;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+   
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 70% 5%, rgba(92, 72, 156, .28), transparent 30%),
+        radial-gradient(circle at 18% 82%, rgba(209, 102, 60, .16), transparent 32%),
+        linear-gradient(#02050d, #07101d 70%, #03070d);
+      color: var(--text);
+      font-family: Inter, Segoe UI, sans-serif
+    }
+
+    body:before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .55;
+      background-image:
+        radial-gradient(circle, #fff 0 1px, transparent 1.4px);
+      background-size: 79px 73px
+    }
+
+    .shell {
+      position: relative;
+      max-width: 1500px;
+      margin: auto;
+      padding: 28px
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px
+    }
+
+    .brand {
+      font-family: Georgia, serif;
+      letter-spacing: .16em;
+      font-size: clamp(22px, 2vw, 34px)
+    }
+
+    .clock {
+      text-align: right;
+      color: #ddd;
+      font-size: 18px
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 370px 1fr;
+      gap: 28px;
+      margin-top: 24px
+    }
+
+    .left {
+      border-right: 1px solid var(--line);
+      padding-right: 28px
+    }
+
+    .verdict {
+      font-family: Georgia, serif;
+      color: var(--gold);
+      font-size: clamp(38px, 4vw, 64px);
+      line-height: 1.05;
+      margin: 18px 0 8px
+    }
+
+    .subtitle {
+      font-family: Georgia, serif;
+      font-size: 28px;
+      margin-bottom: 28px
+    }
+
+    .moon {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      padding: 22px 0;
+      border-block: 1px solid var(--line)
+    }
+
+    .moon-icon {
+      font-size: 74px
+    }
+
+    .label {
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #ddd;
+      font-size: 13px
+    }
+
+    .big {
+      font-family: Georgia, serif;
+      font-size: 34px
+    }
+
+    .conditions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 24px 0
+    }
+
+    .metric {
+      text-align: center;
+      padding: 15px 8px;
+      border-right: 1px solid var(--line)
+    }
+
+    .metric:last-child {
+      border-right: 0
+    }
+
+    .metric strong {
+      display: block;
+      font-family: Georgia, serif;
+      font-size: 26px;
+      margin: 5px 0
+    }
+
+    .gold {
+      color: var(--gold);
+      letter-spacing: .06em
+    }
+
+    .callout {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .035);
+      border-radius: 14px;
+      padding: 17px;
+      line-height: 1.45
+    }
+
+    .section-title {
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px 
+    }
+
+    .best-objects-title {
+    width: 75%;
+}
+
+    .targets {
+      display: grid
+    }
+
+    .target {
+      display: grid;
+      grid-template-columns: 72px 1.5fr 1fr 120px;
+      gap: 18px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .obj-icon {
+      height: 62px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 34px;
+      background: rgba(255, 255, 255, .035)
+    }
+
+    .obj-name {
+      font-family: Georgia, serif;
+      font-size: 25px
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .rating {
+      font-size: 20px;
+      color: var(--gold);
+      white-space: nowrap
+    }
+
+    .bottom {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      margin-top: 24px;
+      background: rgba(4, 10, 20, .64)
+    }
+
+    .sky {
+      min-height: 250px;
+      padding: 22px;
+      position: relative;
+      background:
+        radial-gradient(ellipse at 50% 110%, rgba(210, 103, 62, .3), transparent 45%),
+        linear-gradient(transparent, rgba(20, 25, 51, .4))
+    }
+
+    .skyline {
+      position: absolute;
+      inset: auto 0 0;
+      height: 45px;
+      background: #010306;
+      clip-path: polygon(0 70%, 8% 40%, 15% 75%, 25% 35%, 35% 78%, 48% 45%, 60% 73%, 72% 30%, 85% 68%, 93% 42%, 100% 75%, 100% 100%, 0 100%)
+    }
+
+    .sky-object {
+      position: absolute;
+      text-align: center;
+      font-family: Georgia, serif
+    }
+
+    .events {
+      border-left: 1px solid var(--line);
+      padding: 22px
+    }
+
+    .event {
+      padding: 15px 0;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .small-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 12px
+    }
+
+    .error {
+      padding: 24px;
+      color: #ffd2d2
+    }
+
+    @media(max-width:900px) {
+      .grid {
+        grid-template-columns: 1fr
+      }
+
+      .left {
+        border-right: 0;
+        padding-right: 0
+      }
+
+      .target {
+        grid-template-columns: 60px 1fr 110px
+      }
+
+      .target .when {
+        display: none
+      }
+
+      .bottom {
+        grid-template-columns: 1fr
+      }
+
+      .events {
+        border-left: 0;
+        border-top: 1px solid var(--line)
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">🔭 TONIGHT’S SKY</div>
+      <div class="clock">
+        <div id="date"></div>
+        <div><span id="time"></span> · <span id="temp">--°C</span><span id="tempLabel" class="muted">@ Best
+            Viewing</span></div>
+      </div>
+    </header>
+    <div id="app">
+      <div class="error">Loading tonight’s sky…</div>
+    </div>
+    
+  </main>
+  <script>
+
+    const LOCATION = {
+      name: "Nanaimo, BC",
+      latitude: 49.1659,
+      longitude: -123.9401,
+      elevation: 28,
+      timezone: "America/Vancouver"
+    };
+
+    const PLANETS = [
+      { name: "Mercury", body: Astronomy.Body.Mercury, type: "Planet", icon: "☿" },
+      { name: "Venus", body: Astronomy.Body.Venus, type: "Planet", icon: "♀" },
+      { name: "Mars", body: Astronomy.Body.Mars, type: "Planet", icon: "♂" },
+      { name: "Jupiter", body: Astronomy.Body.Jupiter, type: "Planet", icon: "♃" },
+      { name: "Saturn", body: Astronomy.Body.Saturn, type: "Planet", icon: "♄" },
+      { name: "Uranus", body: Astronomy.Body.Uranus, type: "Planet", icon: "⛢" },
+      { name: "Neptune", body: Astronomy.Body.Neptune, type: "Planet", icon: "♆" }
+    ];
+
+    const DEEP_SKY = [
+      { name: "Andromeda Galaxy", code: "M31", type: "Galaxy", ra: 0.712, dec: 41.269, icon: "🌌", difficulty: 2 },
+      { name: "Orion Nebula", code: "M42", type: "Nebula", ra: 5.588, dec: -5.391, icon: "☁", difficulty: 1 },
+      { name: "Pleiades", code: "M45", type: "Open Cluster", ra: 3.792, dec: 24.117, icon: "✦", difficulty: 1 },
+      { name: "Hercules Cluster", code: "M13", type: "Globular Cluster", ra: 16.695, dec: 36.467, icon: "✺", difficulty: 2 },
+      { name: "Ring Nebula", code: "M57", type: "Planetary Nebula", ra: 18.893, dec: 33.029, icon: "◉", difficulty: 3 },
+      { name: "Double Cluster", code: "NGC 869/884", type: "Open Clusters", ra: 2.333, dec: 57.133, icon: "✦", difficulty: 1 },
+      { name: "Beehive Cluster", code: "M44", type: "Open Cluster", ra: 8.673, dec: 19.667, icon: "✣", difficulty: 1 },
+      { name: "Whirlpool Galaxy", code: "M51", type: "Galaxy", ra: 13.498, dec: 47.195, icon: "🌀", difficulty: 3 },
+      { name: "Dumbbell Nebula", code: "M27", type: "Planetary Nebula", ra: 19.993, dec: 22.721, icon: "◌", difficulty: 2 }
+    ];
+
+    const observer = new Astronomy.Observer(
+      LOCATION.latitude,
+      LOCATION.longitude,
+      LOCATION.elevation
+    );
+
+    function fmtTime(date) {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: LOCATION.timezone,
+        hour: "numeric",
+        minute: "2-digit"
+      }).format(date);
+    }
+
+    function fmtDate(date) {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: LOCATION.timezone,
+        weekday: "long",
+        month: "long",
+        day: "numeric"
+      }).format(date);
+    }
+
+    function localHour(date) {
+      return Number(new Intl.DateTimeFormat("en-CA", {
+        timeZone: LOCATION.timezone,
+        hour: "2-digit",
+        hourCycle: "h23"
+      }).format(date));
+    }
+
+    function altitudeForBody(body, date) {
+      const eq = Astronomy.Equator(body, date, observer, true, true);
+      const hor = Astronomy.Horizon(date, observer, eq.ra, eq.dec, "normal");
+      return hor.altitude;
+    }
+
+    function altitudeForRaDec(ra, dec, date) {
+      const hor = Astronomy.Horizon(date, observer, ra, dec, "normal");
+      return hor.altitude;
+    }
+
+    function compass(azimuth) {
+      const labels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+      return labels[Math.round(azimuth / 45) % 8];
+    }
+
+    function bodyPosition(body, date) {
+      const eq = Astronomy.Equator(body, date, observer, true, true);
+      const hor = Astronomy.Horizon(date, observer, eq.ra, eq.dec, "normal");
+      return { altitude: hor.altitude, azimuth: hor.azimuth, direction: compass(hor.azimuth) };
+    }
+
+    function darknessAt(date) {
+      return altitudeForBody(Astronomy.Body.Sun, date);
+    }
+
+    function sampleTonight() {
+      const now = new Date();
+      const samples = [];
+      for (let h = 0; h <= 14; h += 0.5) {
+        const d = new Date(now.getTime() + h * 3600000);
+        if (darknessAt(d) < -8) samples.push(d);
+      }
+      if (!samples.length) {
+        for (let h = 0; h <= 24; h += 0.5) {
+          const d = new Date(now.getTime() + h * 3600000);
+          if (darknessAt(d) < -8) samples.push(d);
+        }
+      }
+      return samples;
+    }
+
+    function bestPlanetTargets(samples) {
+      return PLANETS.map(p => {
+        let best = null;
+        for (const date of samples) {
+          const pos = bodyPosition(p.body, date);
+          if (!best || pos.altitude > best.altitude) best = { ...pos, date };
+        }
+        const illum = Astronomy.Illumination(p.body, best?.date || new Date());
+        return {
+          ...p,
+          ...best,
+          magnitude: illum.mag
+        };
+      })
+        .filter(x => x.altitude >= 12)
+        .sort((a, b) => (b.altitude + Math.max(0, 2 - a.magnitude) * 5) - (a.altitude + Math.max(0, 2 - b.magnitude) * 5));
+    }
+
+    function bestDeepSkyTargets(samples) {
+      return DEEP_SKY.map(obj => {
+        let best = null;
+        for (const date of samples) {
+          const altitude = altitudeForRaDec(obj.ra, obj.dec, date);
+          if (!best || altitude > best.altitude) best = { altitude, date };
+        }
+        return { ...obj, ...best };
+      })
+        .filter(x => x.altitude >= 18)
+        .sort((a, b) => (b.altitude - b.difficulty * 6) - (a.altitude - a.difficulty * 6));
+    }
+
+    function moonData(date = new Date()) {
+      const illum = Astronomy.Illumination(Astronomy.Body.Moon, date);
+      const phaseAngle = Astronomy.MoonPhase(date);
+      const pct = Math.round(illum.phase_fraction * 100);
+      let phase;
+      if (phaseAngle < 22.5 || phaseAngle >= 337.5) phase = "New Moon";
+      else if (phaseAngle < 67.5) phase = "Waxing Crescent";
+      else if (phaseAngle < 112.5) phase = "First Quarter";
+      else if (phaseAngle < 157.5) phase = "Waxing Gibbous";
+      else if (phaseAngle < 202.5) phase = "Full Moon";
+      else if (phaseAngle < 247.5) phase = "Waning Gibbous";
+      else if (phaseAngle < 292.5) phase = "Last Quarter";
+      else phase = "Waning Crescent";
+      return { pct, phase, angle: phaseAngle };
+    }
+
+
+    async function fetchWeather() {
+      const params = new URLSearchParams({
+        latitude: LOCATION.latitude,
+        longitude: LOCATION.longitude,
+        hourly: "temperature_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,relative_humidity_2m,wind_speed_10m,precipitation_probability",
+        forecast_days: "2",
+        timezone: LOCATION.timezone
+      });
+      const res = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+      if (!res.ok) throw new Error("Weather service unavailable");
+      const data = await res.json();
+      const h = data.hourly;
+      return h.time.map((time, i) => ({
+        date: new Date(time),
+        temperature: Math.round(h.temperature_2m[i]),
+        cloud: Math.round(h.cloud_cover[i]),
+        lowCloud: Math.round(h.cloud_cover_low?.[i] ?? h.cloud_cover[i]),
+        midCloud: Math.round(h.cloud_cover_mid?.[i] ?? h.cloud_cover[i]),
+        highCloud: Math.round(h.cloud_cover_high?.[i] ?? h.cloud_cover[i]),
+        visibilityKm: Math.round((h.visibility[i] || 0) / 1000),
+        humidity: Math.round(h.relative_humidity_2m[i]),
+        wind: Math.round(h.wind_speed_10m[i]),
+        rain: Math.round(h.precipitation_probability[i] || 0)
+      }));
+    }
+
+    function moonInterference(date) {
+      const moon = moonData(date);
+      const altitude = altitudeForBody(Astronomy.Body.Moon, date);
+      if (altitude <= 0) return 0;
+      return (moon.pct / 100) * Math.min(1, altitude / 35);
+    }
+
+    function analyzeObservingWindow(hourly) {
+      const now = new Date();
+      const end = new Date(now.getTime() + 18 * 3600000);
+      const hours = hourly.filter(w => w.date >= now && w.date <= end).map(w => {
+        const sunAltitude = darknessAt(w.date);
+        const fullyDark = sunAltitude <= -18;
+        const nauticalDark = sunAltitude <= -12;
+        const moonPenalty = moonInterference(w.date);
+
+        let score = 5;
+        score -= w.cloud / 22;
+        score -= w.rain / 30;
+        score -= Math.max(0, w.wind - 8) / 14;
+        score -= Math.max(0, w.humidity - 78) / 28;
+        score -= Math.max(0, 12 - w.visibilityKm) / 8;
+        score -= moonPenalty * 1.4;
+        if (!fullyDark) score -= nauticalDark ? 0.8 : 2.4;
+
+        return {
+          ...w, sunAltitude, fullyDark, nauticalDark, moonPenalty,
+          score: Math.max(1, Math.min(5, score))
+        };
+      });
+
+      const astronomical = hours.filter(h => h.fullyDark);
+      const usable = astronomical.filter(h => h.cloud < 60 && h.rain < 40 && h.score >= 2.5);
+      const best = [...hours].sort((a, b) => b.score - a.score)[0];
+
+      let bestRun = [], run = [];
+      for (const h of usable) {
+        if (!run.length || h.date - run[run.length - 1].date <= 75 * 60000) run.push(h);
+        else {
+          if (run.length > bestRun.length) bestRun = run;
+          run = [h];
+        }
+      }
+      if (run.length > bestRun.length) bestRun = run;
+
+      let total = best ? Math.round(best.score) : 1;
+      if (!astronomical.length || bestRun.length === 0) total = Math.min(total, 2);
+      else if (bestRun.length === 1) total = Math.min(total, 3);
+      else if (bestRun.length === 2) total = Math.min(total, 4);
+
+      return {
+        hours, astronomical, usable, best,
+        darkStart: astronomical[0]?.date || null,
+        darkEnd: astronomical.at(-1)?.date || null,
+        usableStart: bestRun[0]?.date || null,
+        usableEnd: bestRun.at(-1)?.date || null,
+        usableHours: bestRun.length,
+        total: Math.max(1, Math.min(5, total))
+      };
+    }
+
+    function estimateConditions(weather) {
+      const transparencyScore = Math.max(1, Math.min(5,
+        Math.round(5 - weather.cloud / 24 - weather.humidity / 100 + weather.visibilityKm / 25)
+      ));
+      const seeingScore = Math.max(1, Math.min(5,
+        Math.round(5 - weather.wind / 14 - weather.lowCloud / 50)
+      ));
+      return { transparencyScore, seeingScore };
+    }
+
+    function stars(score) {
+      return "★".repeat(score) + "☆".repeat(5 - score);
+    }
+
+    function conditionText(score) {
+      return ["", "Poor", "Limited", "Fair", "Good", "Excellent"][score];
+    }
+
+    function altitudeRating(altitude, difficulty = 1) {
+      let r = altitude >= 60 ? 5 : altitude >= 42 ? 4 : altitude >= 27 ? 3 : altitude >= 15 ? 2 : 1;
+      return Math.max(1, r - Math.max(0, difficulty - 1));
+    }
+
+    function targetReason(target) {
+      const h = Math.round(target.altitude);
+      return `${h}° high in the ${target.direction || "sky"}`;
+    }
+
+    function moonEmoji(pct, angle) {
+      if (pct < 4) return "🌑";
+      if (angle < 67.5) return "🌒";
+      if (angle < 112.5) return "🌓";
+      if (angle < 157.5) return "🌔";
+      if (angle < 202.5) return "🌕";
+      if (angle < 247.5) return "🌖";
+      if (angle < 292.5) return "🌗";
+      return "🌘";
+    }
+
+    function statusMessage(weather, score, moon, info) {
+      if (!info.astronomical.length) return "No full astronomical darkness in the next 18 hours.";
+      if (info.usableHours === 0) return "No reliably useful dark observing window tonight.";
+      const windowText = `${fmtTime(info.usableStart)}–${fmtTime(info.usableEnd)}`;
+      if (weather.cloud >= 80) return "Clouds dominate the best available dark hour.";
+      if (weather.rain >= 45) return "Rain risk is too high for comfortable observing.";
+      if (score >= 5 && moon.pct <= 25) return `Excellent conditions during ${windowText}.`;
+      if (score >= 4) return `Good telescope conditions, best around ${windowText}.`;
+      if (score === 3) return `Mixed conditions. Best chance: ${windowText}.`;
+      return `Only a short or compromised window is available around ${windowText}.`;
+    }
+
+    function renderTarget(t) {
+      const rating = altitudeRating(t.altitude, t.difficulty || 1);
+      return `<div class="target">
+    <div class="obj-icon">${t.icon}</div>
+    <div><div class="obj-name">${t.name}</div><div class="muted">${t.code || ""}${t.code ? " · " : ""}${t.type}</div></div>
+    <div class="when"><div class="label">Best time</div><div class="big" style="font-size:23px">${fmtTime(t.date)}</div><div class="muted">${Math.round(t.altitude)}° above horizon</div></div>
+    <div class="rating">${stars(rating)}</div>
+  </div>`;
+    }
+
+    async function render() {
+      try {
+        const now = new Date();
+        const samples = sampleTonight();
+        const moon = moonData(now);
+        const hourlyWeather = await fetchWeather();
+        const observing = analyzeObservingWindow(hourlyWeather);
+        const weather = observing.best;
+        const conditions = estimateConditions(weather);
+        const planets = bestPlanetTargets(samples).slice(0, 3);
+        const deep = bestDeepSkyTargets(samples).slice(0, 5);
+        const targets = [...planets, ...deep].sort((a, b) => altitudeRating(b.altitude, b.difficulty || 1) - altitudeRating(a.altitude, a.difficulty || 1)).slice(0, 6);
+        const heading = conditionText(observing.total);
+        document.querySelector("#app").innerHTML = `
+      <section class="grid">
+        <aside class="left">
+          <div class="verdict">${heading} night</div>
+          <div class="subtitle">for stargazing ✦</div>
+          <div class="moon">
+            <div class="moon-icon">${moonEmoji(moon.pct, moon.angle)}</div>
+            <div><div class="label">Moon</div><div class="big">${moon.pct}%</div><div class="muted">${moon.phase}</div></div>
+          </div>
+          <div class="conditions">
+            <div class="metric"><div class="label">Cloud</div><strong>${weather.cloud}%</strong><span class="gold">${stars(Math.max(1, 5 - Math.round(weather.cloud / 25)))}</span></div>
+            <div class="metric"><div class="label">Seeing*</div><strong>${conditions.seeingScore}/5</strong><span class="gold">${stars(conditions.seeingScore)}</span></div>
+            <div class="metric"><div class="label">Transparency*</div><strong>${conditionText(conditions.transparencyScore)}</strong><span class="gold">${stars(conditions.transparencyScore)}</span></div>
+          </div>
+          <div class="callout">💡 ${statusMessage(weather, observing.total, moon, observing)}</div>
+          <div class="small-note">Astronomical darkness: ${observing.darkStart ? `${fmtTime(observing.darkStart)}–${fmtTime(observing.darkEnd)}` : "none"}. Usable dark hours: ${observing.usableHours}.<br>*Seeing and transparency remain weather-based estimates, not observatory measurements.</div>
+        </aside>
+        <section>
+          <div class="section-title best-objects-title">Best objects tonight</div>
+          <div class="targets">${targets.length ? targets.map(renderTarget).join("") : '<div class="error">No strong targets are high enough during dark hours tonight.</div>'}</div>
+        </section>
+      </section>
+      <section class="bottom">
+        <div class="sky">
+          <div class="section-title">A glance at tonight</div>
+          ${targets.slice(0, 4).map((t, i) => `<div class="sky-object" style="left:${12 + i * 24}%;top:${145 - Math.min(105, t.altitude)}px"><div class="gold">●</div>${t.name}</div>`).join("")}
+          <div class="skyline"></div>
+        </div>
+        <aside class="events">
+          <div class="section-title">Tonight’s notes</div>
+          <div class="event">☁ Cloud cover: <strong>${weather.cloud}%</strong></div>
+          <div class="event">👁 Visibility: <strong>${weather.visibilityKm} km</strong></div>
+          <div class="event">💨 Wind: <strong>${weather.wind} km/h</strong></div>
+          <div class="event">🌧 Rain chance: <strong>${weather.rain}%</strong></div>
+          <div class="event">🌑 Full darkness: <strong>${observing.darkStart ? `${fmtTime(observing.darkStart)}–${fmtTime(observing.darkEnd)}` : "None"}</strong></div>
+          <div class="event">🔭 Usable dark hours: <strong>${observing.usableHours}</strong></div>
+        </aside>
+      </section>`;
+        document.querySelector("#temp").textContent = `${weather.temperature}°C`;
+        const tempLabel = document.querySelector("#tempLabel");
+
+        if (observing.usableHours > 0) {
+          tempLabel.textContent = "@ Best Viewing";
+        } else {
+          tempLabel.textContent = "@ Best Available";
+        }
+      } catch (err) {
+        document.querySelector("#app").innerHTML = `<div class="error"><strong>Couldn’t load the live sky.</strong><br>${err.message}<br><br>This page needs internet access for weather and the astronomy library.</div>`;
+      }
+    }
+    function updateClock() {
+      const n = new Date();
+      document.querySelector("#date").textContent = fmtDate(n);
+      document.querySelector("#time").textContent = fmtTime(n);
+    }
+    updateClock(); setInterval(updateClock, 30000); render(); setInterval(render, 30 * 60 * 1000);
+  </script>
+</body>
+
+</html>
