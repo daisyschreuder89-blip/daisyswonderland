@@ -489,7 +489,7 @@
             inset: 0;
             border-radius: 50%;
 
-            background: rgba(184, 58, 108, 0.5);
+            background: rgba(237, 94, 99, 0.5);
             filter: blur(8px);
             mix-blend-mode: screen;
 
@@ -1049,6 +1049,21 @@
             z-index: 30;
             cursor: pointer;
         }
+
+        .spanish-hotspot {
+            position: absolute;
+
+            left: 47.5%;
+            bottom: 22%;
+            width: 38px;
+            height: 45px;
+
+            background: transparent;
+            border: 0;
+
+            z-index: 30;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -1073,6 +1088,7 @@
         <button class="computer-hotspot" type="button" aria-label="Start computer"></button>
         <button class="daisy-hotspot" type="button" aria-label="Open Daisy's Pi"></button>
         <button class="korean-hotspot" type="button" aria-label="Open Korean study"></button>
+        <button class="spanish-hotspot" type="button" aria-label="Open Spanish study"></button>
 
         <div class="cat-eye eye-left"></div>
         <div class="cat-eye eye-right"></div>
@@ -1370,6 +1386,12 @@
 
         korean.addEventListener("click", () => {
             openMiniWindow("korean.html", "Korean Study");
+        });
+
+        const spanish = document.querySelector(".spanish-hotspot");
+
+        spanish.addEventListener("click", () => {
+            openMiniWindow("spanish.html", "Spanish Study");
         });
     </script>
 

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spanish Lessons 1–5 Flashcards</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg1:#fff7ed;
+  --bg2:#eef6ff;
+  --card:#ffffff;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --border:#d8dee8;
+  --shadow:0 18px 50px rgba(31,41,55,.14);
+}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:var(--text);
+  padding:24px;
+}
+.app{width:min(860px,100%);margin:0 auto}
+.header{text-align:center;margin-bottom:20px}
+h1{margin:0 0 8px;font-size:clamp(2rem,5vw,3rem)}
+.subtitle{margin:0;color:var(--muted)}
+.stats{margin-top:8px;font-size:.95rem;color:var(--muted)}
+.controls{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin:18px 0;
+}
+select,button{
+  font:inherit;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:11px 14px;
+  background:#fff;
+  color:var(--text);
+}
+button{cursor:pointer}
+button:hover,select:hover{border-color:#8b98a9}
+.card{
+  min-height:390px;
+  background:var(--card);
+  border-radius:26px;
+  padding:34px 28px;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  cursor:pointer;
+  user-select:none;
+  position:relative;
+}
+.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
+.badge{
+  padding:6px 10px;
+  border-radius:999px;
+  background:#f3f4f6;
+  color:#4b5563;
+  font-size:.78rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.emoji{font-size:4.2rem;margin-bottom:16px}
+.front{font-size:clamp(2rem,6vw,3.5rem);font-weight:700;line-height:1.2}
+.back{display:none;width:100%}
+.card.flipped .front{display:none}
+.card.flipped .back{display:block}
+.english{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:700;margin-bottom:20px}
+.example-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:#9ca3af;margin-bottom:7px}
+.example{font-size:clamp(1.15rem,3vw,1.5rem);color:#4b5563;line-height:1.5}
+.hint{position:absolute;bottom:20px;color:#9ca3af;font-size:.9rem}
+.bottom-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}
+.progress{text-align:center;margin-top:14px;color:var(--muted)}
+.empty{font-size:1.2rem;color:var(--muted)}
+
+.back-button {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+
+    padding: 9px 14px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.8);
+    color: #555;
+
+    font-size: 14px;
+    cursor: pointer;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.10);
+}
+
+.back-button:hover {
+    transform: translateY(-2px);
+}
+@media(max-width:680px){
+  body{padding:14px}
+  .controls{grid-template-columns:1fr}
+  .bottom-bar{grid-template-columns:1fr}
+  .card{min-height:360px;padding:28px 20px}
+}
+</style>
+</head>
+<body>
+<main class="app">
+  <button class="back-button" onclick="window.location.href='spanish.html'">
+    ← Spanish Drawers
+</button>
+  <div class="header">
+    <h1>Spanish Flashcards</h1>
+    <p class="subtitle">A fuller deck for Lessons 1–5</p>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <div class="controls">
+    <select id="lessonFilter">
+      <option value="all">All lessons</option>
+      <option value="1">Lesson 1</option>
+      <option value="2">Lesson 2</option>
+      <option value="3">Lesson 3</option>
+      <option value="4">Lesson 4</option>
+      <option value="5">Lesson 5</option>
+    </select>
+
+    <select id="typeFilter">
+      <option value="all">All card types</option>
+      <option value="vocab">Vocabulary</option>
+      <option value="expression">Expressions</option>
+      <option value="question">Questions</option>
+      <option value="pattern">Sentence patterns</option>
+    </select>
+
+    <button id="shuffleBtn">Shuffle cards</button>
+  </div>
+
+  <section class="card" id="card" tabindex="0" aria-label="Flashcard">
+    <div class="badges">
+      <div class="badge" id="lessonBadge"></div>
+      <div class="badge" id="typeBadge"></div>
+    </div>
+    <div class="emoji" id="emoji"></div>
+    <div class="front" id="front"></div>
+    <div class="back">
+      <div class="english" id="english"></div>
+      <div class="example-label">Example</div>
+      <div class="example" id="example"></div>
+    </div>
+    <div class="hint">Click the card or press Space to flip</div>
+  </section>
+
+  <div class="bottom-bar">
+    <button id="prevBtn">← Previous</button>
+    <button id="randomBtn">Random card</button>
+    <button id="nextBtn">Next →</button>
+  </div>
+
+  <div class="progress" id="progress"></div>
+</main>
+
+<script>
+const cards = [{"lesson":1,"type":"expression","spanish":"Hola","english":"Hello","emoji":"👋","example":"Hola, buenos días."},{"lesson":1,"type":"expression","spanish":"Buenos días","english":"Good morning","emoji":"🌞","example":"Buenos días. Yo soy Paco."},{"lesson":1,"type":"expression","spanish":"Buenas tardes","english":"Good afternoon","emoji":"🌇","example":"Buenas tardes, profesor Ramírez."},{"lesson":1,"type":"expression","spanish":"Mucho gusto","english":"Nice to meet you","emoji":"🤝","example":"Mucho gusto."},{"lesson":1,"type":"expression","spanish":"Encantado / Encantada","english":"Pleased to meet you","emoji":"😊","example":"Encantada de conocerlo."},{"lesson":1,"type":"expression","spanish":"Encantado de conocerlos","english":"Pleased to meet you all","emoji":"🤝","example":"Encantado de conocerlos."},{"lesson":1,"type":"question","spanish":"¿Cómo te llamas?","english":"What is your name?","emoji":"🙋","example":"Me llamo Daisy."},{"lesson":1,"type":"pattern","spanish":"Me llamo...","english":"My name is...","emoji":"🙋","example":"Me llamo Daisy."},{"lesson":1,"type":"question","spanish":"¿Cómo se llama?","english":"What is his or her name?","emoji":"👤","example":"Se llama Tomás."},{"lesson":1,"type":"pattern","spanish":"Se llama...","english":"His or her name is...","emoji":"👤","example":"Ella se llama Susana."},{"lesson":1,"type":"pattern","spanish":"Yo soy...","english":"I am...","emoji":"🧍","example":"Yo soy Paco."},{"lesson":1,"type":"pattern","spanish":"Él es... / Ella es...","english":"He is... / She is...","emoji":"👥","example":"Él es chileno. Ella es cubana."},{"lesson":1,"type":"question","spanish":"¿Son ustedes españoles?","english":"Are you Spanish?","emoji":"🇪🇸","example":"No, somos latinoamericanos."},{"lesson":1,"type":"question","spanish":"¿Es usted profesor?","english":"Are you a teacher?","emoji":"🧑‍🏫","example":"Sí, soy profesor de chino."},{"lesson":1,"type":"pattern","spanish":"Somos sus alumnos.","english":"We are your students.","emoji":"🎓","example":"Usted es nuestro profesor. Somos sus alumnos."},{"lesson":1,"type":"vocab","spanish":"amigo / amiga","english":"friend","emoji":"🧑‍🤝‍🧑","example":"Ana y Li Meilan son amigas."},{"lesson":1,"type":"vocab","spanish":"alumno / alumna","english":"student / pupil","emoji":"🎓","example":"Somos sus alumnos."},{"lesson":1,"type":"vocab","spanish":"profesor / profesora","english":"teacher","emoji":"🧑‍🏫","example":"Paco es profesor de chino."},{"lesson":1,"type":"vocab","spanish":"estudiante","english":"student","emoji":"📚","example":"Los tres son estudiantes."},{"lesson":1,"type":"vocab","spanish":"joven / jóvenes","english":"young person / young people","emoji":"🧑","example":"¿Eres amiga de esos jóvenes?"},{"lesson":1,"type":"question","spanish":"¿Eres amiga de ellos?","english":"Are you their friend?","emoji":"👥","example":"Sí, soy amiga de ellos."},{"lesson":1,"type":"question","spanish":"¿Quién es ese chico?","english":"Who is that boy?","emoji":"❓","example":"Se llama Manolo."},{"lesson":1,"type":"question","spanish":"¿Se llama Manolo?","english":"Is his name Manolo?","emoji":"🙋","example":"Sí, él se llama Manolo."},{"lesson":1,"type":"question","spanish":"¿Es cubano?","english":"Is he Cuban?","emoji":"🇨🇺","example":"No, es panameño."},{"lesson":1,"type":"question","spanish":"¿Son novios?","english":"Are they dating?","emoji":"💞","example":"¡Qué va! Solo son amigos."},{"lesson":1,"type":"expression","spanish":"¡Qué va!","english":"No way! / Not at all!","emoji":"🙅","example":"¡Qué va! Solo son amigos."},{"lesson":1,"type":"pattern","spanish":"Solo son amigos.","english":"They are only friends.","emoji":"🙂","example":"No son novios. Solo son amigos."},{"lesson":1,"type":"vocab","spanish":"novio / novia","english":"boyfriend / girlfriend","emoji":"💞","example":"Él es el novio de la chica."},{"lesson":1,"type":"vocab","spanish":"chico / chica","english":"boy / girl","emoji":"🧑","example":"¿Quién es ese chico?"},{"lesson":1,"type":"vocab","spanish":"ellos / ellas","english":"they / them","emoji":"👥","example":"Soy amiga de ellos."},{"lesson":1,"type":"vocab","spanish":"ese / esa / esos / esas","english":"that / those","emoji":"👉","example":"¿Quién es esa chica?"},{"lesson":1,"type":"vocab","spanish":"español / española","english":"Spanish","emoji":"🇪🇸","example":"Ramírez es español."},{"lesson":1,"type":"vocab","spanish":"mexicano / mexicana","english":"Mexican","emoji":"🇲🇽","example":"Ana es mexicana."},{"lesson":1,"type":"vocab","spanish":"chino / china","english":"Chinese","emoji":"🇨🇳","example":"Li Meilan es china."},{"lesson":1,"type":"vocab","spanish":"cubano / cubana","english":"Cuban","emoji":"🇨🇺","example":"Susana es cubana."},{"lesson":1,"type":"vocab","spanish":"chileno / chilena","english":"Chilean","emoji":"🇨🇱","example":"Tomás es chileno."},{"lesson":1,"type":"vocab","spanish":"panameño / panameña","english":"Panamanian","emoji":"🇵🇦","example":"Manolo es panameño."},{"lesson":1,"type":"vocab","spanish":"argentino / argentina","english":"Argentinian","emoji":"🇦🇷","example":"Carmen es argentina."},{"lesson":1,"type":"vocab","spanish":"latinoamericano / latinoamericana","english":"Latin American","emoji":"🌎","example":"Los tres somos latinoamericanos."},{"lesson":2,"type":"question","spanish":"¿Cómo estás?","english":"How are you?","emoji":"🙂","example":"Bien, gracias."},{"lesson":2,"type":"expression","spanish":"Bien, gracias.","english":"Fine, thank you.","emoji":"😊","example":"¿Cómo estás? Bien, gracias."},{"lesson":2,"type":"expression","spanish":"Le presento a...","english":"Let me introduce you to...","emoji":"🤝","example":"Le presento a mis amigos."},{"lesson":2,"type":"question","spanish":"¿De dónde son ustedes?","english":"Where are you from?","emoji":"🌍","example":"Somos de México y Cuba."},{"lesson":2,"type":"question","spanish":"¿De dónde eres?","english":"Where are you from?","emoji":"🌍","example":"Soy de China."},{"lesson":2,"type":"pattern","spanish":"Soy de...","english":"I am from...","emoji":"📍","example":"Soy de China."},{"lesson":2,"type":"pattern","spanish":"Somos de...","english":"We are from...","emoji":"📍","example":"Somos de Canadá."},{"lesson":2,"type":"pattern","spanish":"Ahora estamos en...","english":"Now we are in...","emoji":"📍","example":"Ahora estamos en China."},{"lesson":2,"type":"pattern","spanish":"Estudiamos...","english":"We study...","emoji":"📚","example":"Estudiamos chino."},{"lesson":2,"type":"pattern","spanish":"Enseño...","english":"I teach...","emoji":"🧑‍🏫","example":"Enseño español en una universidad."},{"lesson":2,"type":"pattern","spanish":"Enseña en...","english":"He or she teaches at...","emoji":"🏫","example":"Enseña en una universidad."},{"lesson":2,"type":"vocab","spanish":"lengua","english":"language","emoji":"🗣️","example":"Enseño nuestra lengua."},{"lesson":2,"type":"vocab","spanish":"hispanohablante","english":"Spanish speaker","emoji":"🗣️","example":"Enseña chino a los hispanohablantes."},{"lesson":2,"type":"vocab","spanish":"universidad","english":"university","emoji":"🎓","example":"Enseña en una universidad."},{"lesson":2,"type":"vocab","spanish":"país","english":"country","emoji":"🗺️","example":"Vive en este país."},{"lesson":2,"type":"vocab","spanish":"Alemania","english":"Germany","emoji":"🇩🇪","example":"Ahora estamos en Alemania."},{"lesson":2,"type":"vocab","spanish":"alemán","english":"German language / German","emoji":"🇩🇪","example":"Estudiamos alemán."},{"lesson":2,"type":"pattern","spanish":"Los cuatro somos amigos.","english":"The four of us are friends.","emoji":"👥","example":"Víctor, Pablo, Pilar y yo somos amigos."},{"lesson":2,"type":"pattern","spanish":"Tenemos muchas clases.","english":"We have many classes.","emoji":"📚","example":"Tenemos muchas clases todos los días."},{"lesson":2,"type":"pattern","spanish":"Estamos siempre muy ocupados.","english":"We are always very busy.","emoji":"🗓️","example":"Estamos siempre muy ocupados, pero contentos."},{"lesson":2,"type":"pattern","spanish":"Estamos contentos.","english":"We are happy.","emoji":"😊","example":"Estamos ocupados, pero contentos."},{"lesson":2,"type":"question","spanish":"¿Quién es nuestro profesor?","english":"Who is our teacher?","emoji":"❓","example":"Tenemos varios profesores."},{"lesson":2,"type":"question","spanish":"¿Cómo son ellos?","english":"What are they like?","emoji":"🤔","example":"Son muy buenos profesores."},{"lesson":2,"type":"expression","spanish":"Pues...","english":"Well...","emoji":"💭","example":"Pues, tenemos varios profesores."},{"lesson":2,"type":"vocab","spanish":"varios / varias","english":"several","emoji":"🔢","example":"Tenemos varios profesores."},{"lesson":2,"type":"vocab","spanish":"hombre","english":"man","emoji":"👨","example":"Hay tres hombres."},{"lesson":2,"type":"vocab","spanish":"mujer","english":"woman","emoji":"👩","example":"Hay cuatro mujeres."},{"lesson":2,"type":"vocab","spanish":"cada uno","english":"each one","emoji":"1️⃣","example":"Cada uno se encarga de una asignatura."},{"lesson":2,"type":"vocab","spanish":"asignatura","english":"school subject","emoji":"📘","example":"Cada profesor enseña una asignatura."},{"lesson":2,"type":"vocab","spanish":"lectura","english":"reading","emoji":"📖","example":"Tenemos una clase de lectura."},{"lesson":2,"type":"vocab","spanish":"gramática","english":"grammar","emoji":"📝","example":"Estudiamos gramática."},{"lesson":2,"type":"vocab","spanish":"conversación","english":"conversation","emoji":"💬","example":"Tenemos una clase de conversación."},{"lesson":2,"type":"vocab","spanish":"trabajar","english":"to work","emoji":"💼","example":"Todos trabajan mucho."},{"lesson":2,"type":"pattern","spanish":"Todos trabajan mucho.","english":"They all work hard.","emoji":"💼","example":"Son buenos profesores y trabajan mucho."},{"lesson":2,"type":"pattern","spanish":"Son muy buenos profesores.","english":"They are very good teachers.","emoji":"⭐","example":"Todos trabajan mucho. Son muy buenos profesores."},{"lesson":3,"type":"vocab","spanish":"casa","english":"house","emoji":"🏠","example":"La casa de Juan está en Lima."},{"lesson":3,"type":"vocab","spanish":"habitación","english":"room","emoji":"🚪","example":"La casa tiene muchas habitaciones."},{"lesson":3,"type":"vocab","spanish":"familia","english":"family","emoji":"👨‍👩‍👧‍👦","example":"Toda su familia vive en ella."},{"lesson":3,"type":"vocab","spanish":"padre","english":"father","emoji":"👨","example":"El padre de Juan es médico."},{"lesson":3,"type":"vocab","spanish":"madre","english":"mother","emoji":"👩","example":"Su madre es profesora."},{"lesson":3,"type":"vocab","spanish":"hermano / hermana","english":"brother / sister","emoji":"👧👦","example":"Juan tiene dos hermanos."},{"lesson":3,"type":"vocab","spanish":"abuelo / abuela","english":"grandfather / grandmother","emoji":"👵👴","example":"Sus abuelos viven con la familia."},{"lesson":3,"type":"vocab","spanish":"médico / médica","english":"doctor","emoji":"🩺","example":"Su padre es médico."},{"lesson":3,"type":"vocab","spanish":"hospital","english":"hospital","emoji":"🏥","example":"Trabaja en un hospital."},{"lesson":3,"type":"vocab","spanish":"colegio","english":"school","emoji":"🏫","example":"Enseña inglés en un colegio."},{"lesson":3,"type":"vocab","spanish":"bachillerato","english":"secondary school studies","emoji":"📚","example":"Juan estudia bachillerato."},{"lesson":3,"type":"vocab","spanish":"instituto","english":"secondary school / institute","emoji":"🏫","example":"Va a su instituto."},{"lesson":3,"type":"vocab","spanish":"menor","english":"younger","emoji":"⬇️","example":"Sus hermanos son menores que él."},{"lesson":3,"type":"vocab","spanish":"mayor","english":"older","emoji":"⬆️","example":"Los abuelos son ya muy mayores."},{"lesson":3,"type":"pattern","spanish":"Trabaja en un hospital.","english":"He or she works in a hospital.","emoji":"🏥","example":"El padre de Juan trabaja en un hospital."},{"lesson":3,"type":"pattern","spanish":"Enseña inglés en un colegio.","english":"He or she teaches English at a school.","emoji":"🏫","example":"Su madre enseña inglés en un colegio."},{"lesson":3,"type":"pattern","spanish":"Tiene dos hermanos.","english":"He or she has two siblings.","emoji":"👧👦","example":"Juan tiene dos hermanos."},{"lesson":3,"type":"pattern","spanish":"Van al colegio.","english":"They go to school.","emoji":"🎒","example":"Sus hermanos van al colegio."},{"lesson":3,"type":"vocab","spanish":"levantarse","english":"to get up","emoji":"⏰","example":"Se levanta muy temprano."},{"lesson":3,"type":"vocab","spanish":"bañarse","english":"to bathe / shower","emoji":"🚿","example":"Se baña por la mañana."},{"lesson":3,"type":"vocab","spanish":"cepillarse los dientes","english":"to brush one's teeth","emoji":"🪥","example":"Se cepilla los dientes."},{"lesson":3,"type":"vocab","spanish":"peinarse","english":"to comb one's hair","emoji":"💇","example":"Se peina."},{"lesson":3,"type":"vocab","spanish":"desayunar","english":"to eat breakfast","emoji":"🥐","example":"Después de desayunar, sale de casa."},{"lesson":3,"type":"vocab","spanish":"llevar","english":"to take / bring","emoji":"🚶","example":"Lleva a sus hermanos al colegio."},{"lesson":3,"type":"vocab","spanish":"tomar un autobús","english":"to take a bus","emoji":"🚌","example":"Luego toma un autobús."},{"lesson":3,"type":"vocab","spanish":"regresar","english":"to return","emoji":"↩️","example":"Regresa a casa muy tarde."},{"lesson":3,"type":"pattern","spanish":"Todos los días...","english":"Every day...","emoji":"📅","example":"Todos los días se levanta temprano."},{"lesson":3,"type":"pattern","spanish":"Por la mañana...","english":"In the morning...","emoji":"🌅","example":"Por la mañana tiene cuatro clases."},{"lesson":3,"type":"pattern","spanish":"Por la tarde...","english":"In the afternoon...","emoji":"🌇","example":"Por la tarde también tiene cuatro clases."},{"lesson":3,"type":"expression","spanish":"Después de...","english":"After...","emoji":"➡️","example":"Después de desayunar, sale de casa."},{"lesson":3,"type":"expression","spanish":"Primero...","english":"First...","emoji":"1️⃣","example":"Primero lleva a sus hermanos al colegio."},{"lesson":3,"type":"expression","spanish":"Luego...","english":"Then...","emoji":"2️⃣","example":"Luego toma un autobús."},{"lesson":3,"type":"expression","spanish":"Por eso...","english":"That is why...","emoji":"🔗","example":"Está muy ocupado, por eso regresa tarde."},{"lesson":3,"type":"pattern","spanish":"Todo el día está muy ocupado.","english":"He is very busy all day.","emoji":"🗓️","example":"Tiene ocho clases. Todo el día está muy ocupado."},{"lesson":3,"type":"question","spanish":"¿Cuántos son en tu familia?","english":"How many people are in your family?","emoji":"🔢","example":"Somos siete."},{"lesson":3,"type":"pattern","spanish":"Somos siete.","english":"There are seven of us.","emoji":"7️⃣","example":"Somos siete: mis abuelos, mis padres, mis hermanos y yo."},{"lesson":3,"type":"question","spanish":"¿Dónde vives?","english":"Where do you live?","emoji":"🏠","example":"Vivo en Nanaimo."},{"lesson":3,"type":"pattern","spanish":"Vivo en...","english":"I live in...","emoji":"📍","example":"Vivo en Lima."},{"lesson":3,"type":"question","spanish":"¿Es grande la ciudad?","english":"Is the city big?","emoji":"🏙️","example":"Sí, es bastante grande."},{"lesson":3,"type":"vocab","spanish":"ciudad","english":"city","emoji":"🏙️","example":"Lima es una ciudad grande."},{"lesson":3,"type":"vocab","spanish":"bastante","english":"quite / fairly","emoji":"📏","example":"Es una ciudad bastante grande."},{"lesson":3,"type":"vocab","spanish":"parecer","english":"to seem / look","emoji":"👀","example":"Pareces latinoamericano."},{"lesson":3,"type":"pattern","spanish":"Pareces...","english":"You seem / look...","emoji":"👀","example":"Pareces latinoamericano."},{"lesson":3,"type":"question","spanish":"¿Vives allí con tu familia?","english":"Do you live there with your family?","emoji":"🏠","example":"Sí, vivo allí con mi familia."},{"lesson":3,"type":"question","spanish":"¿Estudias en la universidad?","english":"Do you study at university?","emoji":"🎓","example":"¡Qué va! Estoy todavía en el bachillerato."},{"lesson":3,"type":"vocab","spanish":"todavía","english":"still / yet","emoji":"⏳","example":"Todavía estoy en el bachillerato."},{"lesson":3,"type":"expression","spanish":"Supongo que...","english":"I suppose that...","emoji":"🤔","example":"Supongo que tu casa es grande."},{"lesson":3,"type":"vocab","spanish":"sala de estar","english":"living room","emoji":"🛋️","example":"La casa tiene una sala de estar."},{"lesson":3,"type":"vocab","spanish":"dormitorio","english":"bedroom","emoji":"🛏️","example":"La casa tiene cuatro dormitorios."},{"lesson":3,"type":"vocab","spanish":"cocina","english":"kitchen","emoji":"🍳","example":"La casa tiene una cocina."},{"lesson":3,"type":"vocab","spanish":"cuarto de baño","english":"bathroom","emoji":"🚿","example":"La casa tiene dos cuartos de baño."},{"lesson":3,"type":"pattern","spanish":"Tenemos una casa con...","english":"We have a house with...","emoji":"🏠","example":"Tenemos una casa con una sala de estar y cuatro dormitorios."},{"lesson":3,"type":"expression","spanish":"Todo el tiempo...","english":"All the time...","emoji":"⏰","example":"Todo el tiempo estás ocupado."},{"lesson":4,"type":"vocab","spanish":"por qué","english":"why","emoji":"❓","example":"¿Por qué no me hablas más de tu vida?"},{"lesson":4,"type":"vocab","spanish":"hablar","english":"to speak / talk","emoji":"💬","example":"¿Por qué no me hablas más de tu vida?"},{"lesson":4,"type":"vocab","spanish":"vida","english":"life","emoji":"🌱","example":"¿Por qué no me hablas más de tu vida?"},{"lesson":4,"type":"vocab","spanish":"casualidad","english":"coincidence","emoji":"✨","example":"¡Qué casualidad!"},{"lesson":4,"type":"vocab","spanish":"alegría","english":"joy / happiness","emoji":"😄","example":"¡Qué alegría de volver a verte!"},{"lesson":4,"type":"vocab","spanish":"volver","english":"to return / do again","emoji":"↩️","example":"¡Qué alegría de volver a verte!"},{"lesson":4,"type":"vocab","spanish":"ver","english":"to see","emoji":"👀","example":"¡Qué alegría de volver a verte!"},{"lesson":4,"type":"vocab","spanish":"aquí","english":"here","emoji":"📍","example":"¿Qué haces por aquí?"},{"lesson":4,"type":"vocab","spanish":"venir","english":"to come","emoji":"🚶","example":"Vengo a un curso de verano."},{"lesson":4,"type":"vocab","spanish":"curso","english":"course","emoji":"📘","example":"Vengo a un curso de verano."},{"lesson":4,"type":"vocab","spanish":"verano","english":"summer","emoji":"☀️","example":"Vengo a un curso de verano."},{"lesson":4,"type":"vocab","spanish":"organizar","english":"to organize","emoji":"🗂️","example":"España organiza estos cursos todos los años."},{"lesson":4,"type":"vocab","spanish":"año","english":"year","emoji":"📆","example":"España organiza estos cursos todos los años."},{"lesson":4,"type":"vocab","spanish":"medio / media","english":"half","emoji":"½","example":"Llevo año y medio en una universidad del país."},{"lesson":4,"type":"vocab","spanish":"doctorado","english":"doctorate / PhD program","emoji":"🎓","example":"Estoy en un curso de doctorado."},{"lesson":4,"type":"vocab","spanish":"saber","english":"to know","emoji":"🧠","example":"¡Y yo sin saberlo!"},{"lesson":4,"type":"vocab","spanish":"decir","english":"to say / tell","emoji":"🗣️","example":"En realidad no hay mucho que decir."},{"lesson":4,"type":"vocab","spanish":"lo mismo","english":"the same thing","emoji":"🔁","example":"Todos los días hago lo mismo."},{"lesson":4,"type":"vocab","spanish":"en punto","english":"exactly / on the dot","emoji":"🕖","example":"Me levanto a las siete en punto."},{"lesson":4,"type":"vocab","spanish":"comedor","english":"dining hall","emoji":"🍽️","example":"Voy al comedor de estudiantes a tomar el desayuno."},{"lesson":4,"type":"vocab","spanish":"comenzar","english":"to begin / start","emoji":"▶️","example":"Las clases no comienzan hasta las nueve."},{"lesson":4,"type":"vocab","spanish":"leer","english":"to read","emoji":"📖","example":"Todavía tengo tiempo para leer."},{"lesson":4,"type":"vocab","spanish":"repasar","english":"to review","emoji":"🔄","example":"Repaso las lecciones estudiadas."},{"lesson":4,"type":"vocab","spanish":"lección","english":"lesson","emoji":"📚","example":"Repaso las lecciones estudiadas."},{"lesson":4,"type":"vocab","spanish":"estudiado / estudiada","english":"studied","emoji":"✅","example":"Repaso las lecciones estudiadas."},{"lesson":4,"type":"vocab","spanish":"prepararse","english":"to prepare oneself / get ready","emoji":"📝","example":"Me preparo para las nuevas."},{"lesson":4,"type":"vocab","spanish":"nuevo / nueva","english":"new","emoji":"🆕","example":"Me preparo para las nuevas lecciones."},{"lesson":4,"type":"vocab","spanish":"salir","english":"to leave / go out","emoji":"🚪","example":"A las ocho y media salgo de la residencia."},{"lesson":4,"type":"vocab","spanish":"residencia","english":"residence hall / dormitory","emoji":"🏢","example":"Salgo de la residencia."},{"lesson":4,"type":"vocab","spanish":"facultad","english":"faculty / university school","emoji":"🏛️","example":"Voy a la facultad en metro."},{"lesson":4,"type":"vocab","spanish":"metro","english":"subway / metro","emoji":"🚇","example":"Voy a la facultad en metro."},{"lesson":4,"type":"vocab","spanish":"horario","english":"schedule","emoji":"🗓️","example":"¡Vaya horario más apretado!"},{"lesson":4,"type":"vocab","spanish":"apretado / apretada","english":"tight / busy","emoji":"⏱️","example":"Tenemos un horario muy apretado."},{"lesson":4,"type":"vocab","spanish":"al mediodía","english":"at noon","emoji":"🕛","example":"Al mediodía, almuerzo en un comedor del campus."},{"lesson":4,"type":"vocab","spanish":"almorzar","english":"to have lunch","emoji":"🥗","example":"Al mediodía, almuerzo en un comedor del campus."},{"lesson":4,"type":"vocab","spanish":"campus","english":"campus","emoji":"🏫","example":"Almuerzo en un comedor del campus."},{"lesson":4,"type":"vocab","spanish":"quedarse","english":"to stay / remain","emoji":"📍","example":"Me quedo en la biblioteca casi toda la tarde."},{"lesson":4,"type":"vocab","spanish":"biblioteca","english":"library","emoji":"📚","example":"Me quedo en la biblioteca para estudiar."},{"lesson":4,"type":"vocab","spanish":"temprano","english":"early","emoji":"🌅","example":"Nos levantamos muy temprano."},{"lesson":4,"type":"vocab","spanish":"quedar","english":"to remain / be left","emoji":"⏳","example":"Si todavía nos queda tiempo, leemos algo antes del desayuno."},{"lesson":4,"type":"vocab","spanish":"apenas","english":"hardly / barely","emoji":"🤏","example":"Ya apenas tenemos tiempo para respirar."},{"lesson":4,"type":"vocab","spanish":"respirar","english":"to breathe","emoji":"🌬️","example":"Apenas tenemos tiempo para respirar."},{"lesson":4,"type":"vocab","spanish":"almuerzo","english":"lunch","emoji":"🥪","example":"Después del almuerzo, tenemos que descansar una hora."},{"lesson":4,"type":"vocab","spanish":"descansar","english":"to rest","emoji":"😴","example":"Tenemos que descansar una hora."},{"lesson":4,"type":"vocab","spanish":"hora","english":"hour","emoji":"🕐","example":"Descansamos una hora."},{"lesson":4,"type":"vocab","spanish":"deporte","english":"sport","emoji":"🏃","example":"Por la tarde, muchos de nosotros hacemos algo de deporte."},{"lesson":4,"type":"vocab","spanish":"trabajos de casa","english":"homework / assignments","emoji":"📝","example":"Por la noche, hacemos los trabajos de casa."},{"lesson":4,"type":"vocab","spanish":"acostarse","english":"to go to bed","emoji":"🛏️","example":"Nos acostamos a las once."},{"lesson":4,"type":"vocab","spanish":"aunque","english":"although / even though","emoji":"↔️","example":"Aunque terminamos la jornada muy cansados, yo digo que sí."},{"lesson":4,"type":"vocab","spanish":"terminar","english":"to finish / end","emoji":"🏁","example":"Terminamos la jornada muy cansados."},{"lesson":4,"type":"vocab","spanish":"jornada","english":"day / working day","emoji":"📅","example":"Terminamos la jornada muy cansados."},{"lesson":4,"type":"vocab","spanish":"cansado / cansada","english":"tired","emoji":"🥱","example":"Terminamos la jornada muy cansados."},{"lesson":4,"type":"question","spanish":"¿Qué haces por aquí?","english":"What are you doing around here?","emoji":"❓","example":"Vengo a un curso de verano."},{"lesson":4,"type":"question","spanish":"¿Y tú?","english":"And you?","emoji":"↔️","example":"¿Y tú? ¿Llevas mucho tiempo aquí?"},{"lesson":4,"type":"question","spanish":"¿Llevas mucho tiempo aquí?","english":"Have you been here long?","emoji":"⏳","example":"Sí, llevo año y medio en una universidad del país."},{"lesson":4,"type":"question","spanish":"¿Por qué no me hablas más de tu vida?","english":"Why don't you tell me more about your life?","emoji":"💬","example":"En realidad no hay mucho que decir."},{"lesson":4,"type":"question","spanish":"¿Estamos contentos con nuestra vida estudiantil?","english":"Are we happy with our student life?","emoji":"🙂","example":"Aunque terminamos la jornada muy cansados, yo digo que sí."},{"lesson":4,"type":"expression","spanish":"¡Tú también en España!","english":"You are in Spain too!","emoji":"🇪🇸","example":"Hola, José. ¡Tú también en España!"},{"lesson":4,"type":"expression","spanish":"¡Qué casualidad!","english":"What a coincidence!","emoji":"✨","example":"¡Tú también en España! ¡Qué casualidad!"},{"lesson":4,"type":"expression","spanish":"¡Qué alegría de volver a verte!","english":"How wonderful to see you again!","emoji":"😄","example":"¡Qué alegría de volver a verte!"},{"lesson":4,"type":"expression","spanish":"¡Doctorado!","english":"A doctorate!","emoji":"🎓","example":"¡Doctorado! ¡Y yo sin saberlo!"},{"lesson":4,"type":"expression","spanish":"¡Y yo sin saberlo!","english":"And I didn't even know!","emoji":"😮","example":"¡Doctorado! ¡Y yo sin saberlo!"},{"lesson":4,"type":"expression","spanish":"En realidad...","english":"Actually... / In reality...","emoji":"💭","example":"En realidad no hay mucho que decir."},{"lesson":4,"type":"expression","spanish":"¡Vaya horario más apretado!","english":"What a packed schedule!","emoji":"😯","example":"¡Vaya horario más apretado!"},{"lesson":4,"type":"expression","spanish":"¡Y eso, antes de comenzar la jornada real!","english":"And that's before the real day even begins!","emoji":"⏰","example":"¡Y eso, antes de comenzar la jornada real!"},{"lesson":4,"type":"expression","spanish":"Pues ya ves.","english":"Well, you see. / That's how it is.","emoji":"🤷","example":"Pues ya ves. Al mediodía, almuerzo en un comedor del campus."},{"lesson":4,"type":"expression","spanish":"Yo digo que sí.","english":"I say yes.","emoji":"✅","example":"Aunque terminamos la jornada muy cansados, yo digo que sí."},{"lesson":4,"type":"pattern","spanish":"volver a + infinitivo","english":"to do something again","emoji":"🔁","example":"¡Qué alegría de volver a verte!"},{"lesson":4,"type":"pattern","spanish":"venir a + lugar / actividad","english":"to come to a place / activity","emoji":"➡️","example":"Vengo a un curso de verano."},{"lesson":4,"type":"pattern","spanish":"llevar + período de tiempo + en...","english":"to have been in... for a period of time","emoji":"⏳","example":"Llevo año y medio en una universidad del país."},{"lesson":4,"type":"pattern","spanish":"estar en un curso de...","english":"to be enrolled in a ... course","emoji":"🎓","example":"Estoy en un curso de doctorado."},{"lesson":4,"type":"pattern","spanish":"sin + infinitivo","english":"without doing something","emoji":"🚫","example":"¡Y yo sin saberlo!"},{"lesson":4,"type":"pattern","spanish":"no hay mucho que + infinitivo","english":"there is not much to...","emoji":"🤏","example":"No hay mucho que decir."},{"lesson":4,"type":"pattern","spanish":"ir a + lugar + en + transporte","english":"to go somewhere by a means of transport","emoji":"🚇","example":"Voy a la facultad en metro."},{"lesson":4,"type":"pattern","spanish":"no... hasta...","english":"not... until...","emoji":"⏰","example":"Las clases no comienzan hasta las nueve."},{"lesson":4,"type":"pattern","spanish":"tener tiempo para + infinitivo","english":"to have time to do something","emoji":"⌛","example":"Todavía tengo tiempo para leer."},{"lesson":4,"type":"pattern","spanish":"prepararse para + sustantivo","english":"to prepare for something","emoji":"📝","example":"Me preparo para las nuevas lecciones."},{"lesson":4,"type":"pattern","spanish":"quedarse en + lugar + para + infinitivo","english":"to stay somewhere in order to do something","emoji":"📚","example":"Me quedo en la biblioteca para estudiar."},{"lesson":4,"type":"pattern","spanish":"si todavía + verbo...","english":"if there is still... / if we still...","emoji":"⏳","example":"Si todavía nos queda tiempo, leemos algo antes del desayuno."},{"lesson":4,"type":"pattern","spanish":"al + infinitivo","english":"upon / when doing something","emoji":"▶️","example":"Al comenzar las clases, ya apenas tenemos tiempo para respirar."},{"lesson":4,"type":"pattern","spanish":"apenas + verbo","english":"to hardly / barely do something","emoji":"🤏","example":"Ya apenas tenemos tiempo para respirar."},{"lesson":4,"type":"pattern","spanish":"tener que + infinitivo","english":"to have to do something","emoji":"📌","example":"Tenemos que descansar una hora."},{"lesson":4,"type":"pattern","spanish":"hacer algo de + sustantivo","english":"to do some...","emoji":"🏃","example":"Hacemos algo de deporte."},{"lesson":4,"type":"pattern","spanish":"estar contento con...","english":"to be happy with...","emoji":"😊","example":"¿Estamos contentos con nuestra vida estudiantil?"},{"lesson":4,"type":"pattern","spanish":"aunque + verbo...","english":"although / even though...","emoji":"↔️","example":"Aunque terminamos la jornada muy cansados, yo digo que sí."},{"lesson":5,"type":"vocab","spanish":"invitar","english":"to invite","emoji":"✉️","example":"Quiero invitarte a cenar."},{"lesson":5,"type":"vocab","spanish":"cenar","english":"to have dinner","emoji":"🍽️","example":"Te invito a cenar."},{"lesson":5,"type":"vocab","spanish":"adónde","english":"where to","emoji":"📍","example":"¿Adónde vas con tanta prisa?"},{"lesson":5,"type":"vocab","spanish":"tanto / tanta","english":"so much / so many","emoji":"📈","example":"¿Adónde vas con tanta prisa?"},{"lesson":5,"type":"vocab","spanish":"prisa","english":"hurry / haste","emoji":"🏃","example":"Voy con mucha prisa."},{"lesson":5,"type":"vocab","spanish":"comprar","english":"to buy","emoji":"🛍️","example":"Voy a comprar algo."},{"lesson":5,"type":"vocab","spanish":"temer","english":"to fear / be afraid","emoji":"😟","example":"Temo llegar tarde."},{"lesson":5,"type":"vocab","spanish":"llegar","english":"to arrive","emoji":"🚶","example":"Temo llegar tarde a la tienda."},{"lesson":5,"type":"vocab","spanish":"tienda","english":"store / shop","emoji":"🏪","example":"La tienda cierra a esta hora."},{"lesson":5,"type":"vocab","spanish":"cerrar","english":"to close","emoji":"🔒","example":"La tienda cierra a esta hora."},{"lesson":5,"type":"vocab","spanish":"poder","english":"can / to be able to","emoji":"💪","example":"Puedes hacerlo mañana."},{"lesson":5,"type":"vocab","spanish":"mañana","english":"tomorrow","emoji":"🌅","example":"Puedes hacerlo mañana."},{"lesson":5,"type":"vocab","spanish":"hoy","english":"today","emoji":"📅","example":"Hoy es mi cumpleaños."},{"lesson":5,"type":"vocab","spanish":"cumpleaños","english":"birthday","emoji":"🎂","example":"Hoy es mi cumpleaños."},{"lesson":5,"type":"vocab","spanish":"querer","english":"to want / to love","emoji":"❤️","example":"Quiero invitarte a cenar."},{"lesson":5,"type":"vocab","spanish":"felicitación","english":"congratulation / good wish","emoji":"🎉","example":"¡Felicitaciones!"},{"lesson":5,"type":"vocab","spanish":"alegrarse","english":"to be glad / happy","emoji":"😊","example":"Me alegra celebrar mi cumpleaños contigo."},{"lesson":5,"type":"vocab","spanish":"celebrar","english":"to celebrate","emoji":"🥳","example":"Quiero celebrar mi cumpleaños con un amigo."},{"lesson":5,"type":"vocab","spanish":"dieciocho","english":"eighteen","emoji":"1️⃣8️⃣","example":"Cumplo dieciocho años."},{"lesson":5,"type":"vocab","spanish":"diecinueve","english":"nineteen","emoji":"1️⃣9️⃣","example":"Yolanda cumple diecinueve años."},{"lesson":5,"type":"vocab","spanish":"como","english":"as / since / because","emoji":"🔗","example":"Como ves, soy un poco mayor que tú."},{"lesson":5,"type":"vocab","spanish":"un poco","english":"a little / a bit","emoji":"🤏","example":"Soy un poco mayor que tú."},{"lesson":5,"type":"vocab","spanish":"casi","english":"almost","emoji":"⏳","example":"Casi somos de la misma edad."},{"lesson":5,"type":"vocab","spanish":"edad","english":"age","emoji":"🎈","example":"Somos casi de la misma edad."},{"lesson":5,"type":"vocab","spanish":"restaurante","english":"restaurant","emoji":"🍴","example":"Llegamos al restaurante."},{"lesson":5,"type":"vocab","spanish":"entrar","english":"to enter / go in","emoji":"🚪","example":"¿Entramos?"},{"lesson":5,"type":"vocab","spanish":"allá","english":"over there","emoji":"👉","example":"Allá hay una mesa libre."},{"lesson":5,"type":"vocab","spanish":"mesa","english":"table","emoji":"🪑","example":"Allá hay una mesa libre."},{"lesson":5,"type":"vocab","spanish":"libre","english":"free / available","emoji":"✅","example":"Hay una mesa libre."},{"lesson":5,"type":"vocab","spanish":"sentarse","english":"to sit down","emoji":"🪑","example":"¿Nos sentamos allí?"},{"lesson":5,"type":"vocab","spanish":"parecer","english":"to seem / seem good","emoji":"🤔","example":"Me parece bien."},{"lesson":5,"type":"vocab","spanish":"eh","english":"hey / uh / excuse me","emoji":"💬","example":"Eh, camarero, la carta, por favor."},{"lesson":5,"type":"vocab","spanish":"camarero / camarera","english":"waiter / waitress","emoji":"🧑‍🍳","example":"Camarero, la carta, por favor."},{"lesson":5,"type":"vocab","spanish":"carta","english":"menu","emoji":"📋","example":"La carta, por favor."},{"lesson":5,"type":"expression","spanish":"por favor","english":"please","emoji":"🙏","example":"La carta, por favor."},{"lesson":5,"type":"vocab","spanish":"recomendar","english":"to recommend","emoji":"👍","example":"¿Qué nos recomienda?"},{"lesson":5,"type":"vocab","spanish":"sopa de marisco","english":"seafood soup","emoji":"🍲","example":"Tenemos una buena sopa de marisco."},{"lesson":5,"type":"vocab","spanish":"pedir","english":"to ask for / order","emoji":"🧾","example":"Pedimos una sopa de marisco."},{"lesson":5,"type":"vocab","spanish":"el segundo","english":"second course / main course","emoji":"🍛","example":"De segundo, voy a pedir algo de carne."},{"lesson":5,"type":"vocab","spanish":"carne","english":"meat","emoji":"🥩","example":"Voy a pedir algo de carne."},{"lesson":5,"type":"expression","spanish":"Buenas noches.","english":"Good evening / good night.","emoji":"🌙","example":"Buenas noches, Enrique."},{"lesson":5,"type":"question","spanish":"¿Adónde vas con tanta prisa?","english":"Where are you going in such a hurry?","emoji":"❓","example":"Voy a comprar algo."},{"lesson":5,"type":"pattern","spanish":"ir a + infinitivo","english":"to be going to do something","emoji":"➡️","example":"Voy a comprar algo."},{"lesson":5,"type":"pattern","spanish":"temer + infinitivo","english":"to fear / be afraid of doing something","emoji":"😟","example":"Temo llegar tarde."},{"lesson":5,"type":"expression","spanish":"Puedes hacerlo mañana.","english":"You can do it tomorrow.","emoji":"📅","example":"La tienda ya va a cerrar."},{"lesson":5,"type":"expression","spanish":"Hoy es mi cumpleaños.","english":"Today is my birthday.","emoji":"🎂","example":"Hoy es mi cumpleaños."},{"lesson":5,"type":"expression","spanish":"Quiero invitarte a cenar.","english":"I want to invite you to dinner.","emoji":"🍽️","example":"Hoy es mi cumpleaños. Quiero invitarte a cenar."},{"lesson":5,"type":"expression","spanish":"¡Felicitaciones!","english":"Congratulations!","emoji":"🎉","example":"¡Felicitaciones!"},{"lesson":5,"type":"pattern","spanish":"alegrarse de + infinitivo","english":"to be glad to do something","emoji":"😊","example":"Me alegra celebrar mi cumpleaños contigo."},{"lesson":5,"type":"pattern","spanish":"celebrar ... con...","english":"to celebrate ... with...","emoji":"🥳","example":"Celebro mi cumpleaños con un amigo."},{"lesson":5,"type":"question","spanish":"¿Cuántos años tienes?","english":"How old are you?","emoji":"🎈","example":"Diecinueve."},{"lesson":5,"type":"expression","spanish":"Como ves...","english":"As you can see...","emoji":"👀","example":"Como ves, soy un poco mayor que tú."},{"lesson":5,"type":"pattern","spanish":"ser mayor que...","english":"to be older than...","emoji":"⬆️","example":"Soy un poco mayor que tú."},{"lesson":5,"type":"pattern","spanish":"ser de la misma edad","english":"to be the same age","emoji":"🟰","example":"Casi somos de la misma edad."},{"lesson":5,"type":"expression","spanish":"¡Ya!","english":"There! / Now! / Here we are!","emoji":"📍","example":"¡Ya! Llegamos al restaurante."},{"lesson":5,"type":"question","spanish":"¿Entramos?","english":"Shall we go in?","emoji":"🚪","example":"Ya llegamos al restaurante. ¿Entramos?"},{"lesson":5,"type":"expression","spanish":"Sí, ¿ves?","english":"Yes, see?","emoji":"👀","example":"Sí, ¿ves? Allá hay una mesa libre."},{"lesson":5,"type":"question","spanish":"¿Nos sentamos allí?","english":"Shall we sit there?","emoji":"🪑","example":"Allá hay una mesa libre. ¿Nos sentamos allí?"},{"lesson":5,"type":"expression","spanish":"Me parece bien.","english":"Sounds good to me.","emoji":"👍","example":"¿Nos sentamos allí? Me parece bien."},{"lesson":5,"type":"expression","spanish":"La carta, por favor.","english":"The menu, please.","emoji":"📋","example":"Camarero, la carta, por favor."},{"lesson":5,"type":"question","spanish":"¿Qué nos recomienda?","english":"What do you recommend for us?","emoji":"❓","example":"Camarero, ¿qué nos recomienda?"},{"lesson":5,"type":"expression","spanish":"Tenemos una buena sopa de marisco.","english":"We have a good seafood soup.","emoji":"🍲","example":"Mmm, tenemos una buena sopa de marisco."},{"lesson":5,"type":"question","spanish":"¿Qué te parece?","english":"What do you think?","emoji":"🤔","example":"Pedimos una sopa de marisco. ¿Qué te parece?"},{"lesson":5,"type":"expression","spanish":"Me parece muy bien.","english":"That sounds very good to me.","emoji":"👍","example":"Me parece muy bien."},{"lesson":5,"type":"pattern","spanish":"ir a pedir...","english":"to be going to order...","emoji":"🧾","example":"Voy a pedir algo de carne."},{"lesson":5,"type":"question","spanish":"¿Pedimos también una ensalada de verduras para los dos?","english":"Shall we also order a vegetable salad for both of us?","emoji":"🥗","example":"¿Pedimos una ensalada para los dos?"},{"lesson":5,"type":"expression","spanish":"Buena idea.","english":"Good idea.","emoji":"💡","example":"¿Pedimos una ensalada? Buena idea."},{"lesson":5,"type":"question","spanish":"Y para beber, ¿qué quieren?","english":"And what would you like to drink?","emoji":"🥤","example":"Y para beber, ¿qué quieren?"},{"lesson":5,"type":"pattern","spanish":"para beber","english":"to drink / for drinks","emoji":"🥤","example":"Y para beber, ¿qué quieren?"},{"lesson":5,"type":"expression","spanish":"No vamos a celebrar un cumpleaños sin vino.","english":"We aren't going to celebrate a birthday without wine.","emoji":"🍷","example":"No vamos a celebrar un cumpleaños sin vino."},{"lesson":5,"type":"question","spanish":"¿Pedimos una botella?","english":"Shall we order a bottle?","emoji":"🍾","example":"¿Pedimos una botella?"},{"lesson":5,"type":"expression","spanish":"¡Cómo no!","english":"Of course!","emoji":"✅","example":"¡Cómo no! Un vino tinto y agua mineral."},{"lesson":5,"type":"vocab","spanish":"vino tinto","english":"red wine","emoji":"🍷","example":"Un vino tinto y agua mineral."},{"lesson":5,"type":"vocab","spanish":"agua mineral","english":"mineral water","emoji":"💧","example":"Un vino tinto y agua mineral."},{"lesson":5,"type":"question","spanish":"¿Lo piden ahora o después?","english":"Will you order it now or later?","emoji":"⏰","example":"¿Lo piden ahora o después?"},{"lesson":5,"type":"expression","spanish":"Lo vamos a pedir más tarde.","english":"We are going to order it later.","emoji":"🕒","example":"Lo vamos a pedir más tarde."},{"lesson":5,"type":"expression","spanish":"Muchas gracias por la invitación.","english":"Thank you very much for the invitation.","emoji":"🙏","example":"Javier, muchas gracias por la invitación."},{"lesson":5,"type":"expression","spanish":"De nada. Es un placer.","english":"You're welcome. It's a pleasure.","emoji":"🙂","example":"De nada. Es un placer."},{"lesson":5,"type":"vocab","spanish":"cumplir años","english":"to turn / be ... years old","emoji":"🎂","example":"Yolanda cumple diecinueve años."},{"lesson":5,"type":"pattern","spanish":"Para celebrarlo...","english":"To celebrate it...","emoji":"🥳","example":"Para celebrarlo, invita a sus compañeros a almorzar en casa."},{"lesson":5,"type":"vocab","spanish":"compañero / compañera","english":"classmate / companion","emoji":"👥","example":"Invita a sus compañeros a almorzar."},{"lesson":5,"type":"vocab","spanish":"almorzar","english":"to have lunch","emoji":"🥗","example":"Invita a sus compañeros a almorzar en casa."},{"lesson":5,"type":"vocab","spanish":"trabajo","english":"work","emoji":"💼","example":"Es un día de mucho trabajo para ella."},{"lesson":5,"type":"vocab","spanish":"ayudar","english":"to help","emoji":"🤝","example":"Empieza a ayudar a su madre en la cocina."},{"lesson":5,"type":"pattern","spanish":"empezar a + infinitivo","english":"to begin to do something","emoji":"▶️","example":"Empieza a ayudar a su madre."},{"lesson":5,"type":"expression","spanish":"a las nueve y media","english":"at nine thirty","emoji":"🕤","example":"A las nueve y media empieza a ayudar."},{"lesson":5,"type":"expression","spanish":"a las once y cuarto","english":"at eleven fifteen","emoji":"🕚","example":"A las once y cuarto llegan los primeros invitados."},{"lesson":5,"type":"vocab","spanish":"invitado / invitada","english":"guest","emoji":"🎟️","example":"Llegan los primeros invitados."},{"lesson":5,"type":"vocab","spanish":"recibir","english":"to receive / welcome","emoji":"🤗","example":"Yolanda los recibe con mucha alegría."},{"lesson":5,"type":"pattern","spanish":"recibir a alguien con alegría","english":"to welcome someone happily","emoji":"😊","example":"Yolanda los recibe con mucha alegría."},{"lesson":5,"type":"vocab","spanish":"felicitar","english":"to congratulate","emoji":"🎉","example":"Ellos la felicitan."},{"lesson":5,"type":"vocab","spanish":"feliz","english":"happy","emoji":"😄","example":"Yolanda, muy feliz, los lleva a la sala."},{"lesson":5,"type":"vocab","spanish":"sala","english":"living room / sitting room","emoji":"🛋️","example":"Los lleva a la sala."},{"lesson":5,"type":"vocab","spanish":"presentar","english":"to introduce / present","emoji":"🤝","example":"Los presenta a sus padres."},{"lesson":5,"type":"pattern","spanish":"presentar a alguien a alguien","english":"to introduce someone to someone","emoji":"🤝","example":"Los presenta a sus padres."},{"lesson":5,"type":"pattern","spanish":"Como todavía es pronto para...","english":"Since it is still early to...","emoji":"⏳","example":"Como todavía es pronto para almorzar, se sientan a charlar."},{"lesson":5,"type":"vocab","spanish":"pronto","english":"early / soon","emoji":"⏰","example":"Todavía es pronto para almorzar."},{"lesson":5,"type":"vocab","spanish":"chico / chica","english":"boy / girl; young person","emoji":"🧑","example":"Los chicos se sientan y se ponen a charlar."},{"lesson":5,"type":"pattern","spanish":"ponerse a + infinitivo","english":"to start doing something","emoji":"▶️","example":"Se ponen a charlar."},{"lesson":5,"type":"vocab","spanish":"charlar","english":"to chat","emoji":"💬","example":"Se sientan y se ponen a charlar."},{"lesson":5,"type":"expression","spanish":"a la una y media","english":"at one thirty","emoji":"🕜","example":"A la una y media comienza el almuerzo."},{"lesson":5,"type":"vocab","spanish":"amigo / amiga","english":"friend","emoji":"👥","example":"La madre invita a los amigos de Yolanda a sentarse."},{"lesson":5,"type":"pattern","spanish":"invitar a alguien a + infinitivo","english":"to invite someone to do something","emoji":"✉️","example":"Invita a sus amigos a sentarse a la mesa."},{"lesson":5,"type":"expression","spanish":"sentarse a la mesa","english":"to sit down at the table","emoji":"🍽️","example":"Los amigos se sientan a la mesa."},{"lesson":5,"type":"vocab","spanish":"comenzar","english":"to begin / start","emoji":"▶️","example":"Comienza el almuerzo."},{"lesson":5,"type":"vocab","spanish":"plato","english":"dish / plate","emoji":"🍽️","example":"Hay muchos platos sabrosos."},{"lesson":5,"type":"vocab","spanish":"sabroso / sabrosa","english":"tasty / delicious","emoji":"😋","example":"Hay muchos platos sabrosos."},{"lesson":5,"type":"expression","spanish":"todo el mundo","english":"everyone / everybody","emoji":"🌍","example":"Todo el mundo levanta su copa."},{"lesson":5,"type":"vocab","spanish":"levantar","english":"to raise / lift","emoji":"⬆️","example":"Todo el mundo levanta su copa."},{"lesson":5,"type":"vocab","spanish":"copa","english":"glass / goblet","emoji":"🥂","example":"Todo el mundo levanta su copa para brindar."},{"lesson":5,"type":"vocab","spanish":"brindar","english":"to toast","emoji":"🥂","example":"Levantan sus copas para brindar."},{"lesson":5,"type":"pattern","spanish":"para + infinitivo","english":"in order to do something","emoji":"🎯","example":"Levantan sus copas para brindar."}];
+let filtered = [...cards];
+let index = 0;
+
+const card = document.getElementById("card");
+const lessonBadge = document.getElementById("lessonBadge");
+const typeBadge = document.getElementById("typeBadge");
+const emoji = document.getElementById("emoji");
+const front = document.getElementById("front");
+const english = document.getElementById("english");
+const example = document.getElementById("example");
+const progress = document.getElementById("progress");
+const stats = document.getElementById("stats");
+const lessonFilter = document.getElementById("lessonFilter");
+const typeFilter = document.getElementById("typeFilter");
+
+function prettyType(type) {
+  return {
+    vocab: "Vocabulary",
+    expression: "Expression",
+    question: "Question",
+    pattern: "Pattern"
+  }[type] || type;
+}
+
+function showCard() {
+  card.classList.remove("flipped");
+
+  if (!filtered.length) {
+    lessonBadge.textContent = "";
+    typeBadge.textContent = "";
+    emoji.textContent = "🔎";
+    front.innerHTML = '<div class="empty">No cards match these filters.</div>';
+    english.textContent = "";
+    example.textContent = "";
+    progress.textContent = "0 / 0";
+    stats.textContent = `${cards.length} total cards`;
+    return;
+  }
+
+  const item = filtered[index];
+  lessonBadge.textContent = `Lesson ${item.lesson}`;
+  typeBadge.textContent = prettyType(item.type);
+  emoji.textContent = item.emoji;
+  front.textContent = item.spanish;
+  english.textContent = item.english;
+  example.textContent = item.example;
+  progress.textContent = `${index + 1} / ${filtered.length}`;
+  stats.textContent = `${cards.length} total cards • ${filtered.length} currently shown`;
+}
+
+function nextCard() {
+  if (!filtered.length) return;
+  index = (index + 1) % filtered.length;
+  showCard();
+}
+
+function previousCard() {
+  if (!filtered.length) return;
+  index = (index - 1 + filtered.length) % filtered.length;
+  showCard();
+}
+
+function randomCard() {
+  if (!filtered.length) return;
+  if (filtered.length === 1) {
+    index = 0;
+  } else {
+    let nextIndex = index;
+    while (nextIndex === index) {
+      nextIndex = Math.floor(Math.random() * filtered.length);
+    }
+    index = nextIndex;
+  }
+  showCard();
+}
+
+function shuffleCards() {
+  for (let i = filtered.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
+  }
+  index = 0;
+  showCard();
+}
+
+function applyFilters() {
+  const lesson = lessonFilter.value;
+  const type = typeFilter.value;
+
+  filtered = cards.filter(item => {
+    const lessonMatches = lesson === "all" || String(item.lesson) === lesson;
+    const typeMatches = type === "all" || item.type === type;
+    return lessonMatches && typeMatches;
+  });
+
+  index = 0;
+  showCard();
+}
+
+function flipCard() {
+  if (filtered.length) card.classList.toggle("flipped");
+}
+
+card.addEventListener("click", flipCard);
+card.addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    flipCard();
+  }
+});
+
+document.getElementById("nextBtn").addEventListener("click", nextCard);
+document.getElementById("prevBtn").addEventListener("click", previousCard);
+document.getElementById("randomBtn").addEventListener("click", randomCard);
+document.getElementById("shuffleBtn").addEventListener("click", shuffleCards);
+lessonFilter.addEventListener("change", applyFilters);
+typeFilter.addEventListener("change", applyFilters);
+
+document.addEventListener("keydown", event => {
+  if (event.key === "ArrowRight") nextCard();
+  if (event.key === "ArrowLeft") previousCard();
+});
+
+showCard();
+</script>
+</body>
+</html>
