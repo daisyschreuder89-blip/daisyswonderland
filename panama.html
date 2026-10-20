@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Panama Memories
+  </title>
+  <style>
+   :root {
+    color-scheme:light;
+    --ink:#634c3e;
+    --soft:#a58a70;
+    --paper:#f5ecdc
+}
+* {
+    box-sizing:border-box
+}
+html,body {
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden
+}
+body {
+    font-family:Georgia,'Times New Roman',serif;
+    color:var(--ink);
+    background:radial-gradient(ellipse at 20% 10%,#fff8ec 0%,transparent 60%),linear-gradient(140deg,#eee0c9,#f7eee0 48%,#e7d6bc)
+}
+.album {
+    height:100%;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:clamp(10px,2.5vh,24px) clamp(12px,3vw,30px) clamp(12px,2vh,20px);
+    gap:clamp(8px,1.5vh,14px)
+}
+header {
+    text-align:center;
+    flex:none
+}
+.eyebrow {
+    font:600 clamp(9px,1.3vw,11px) Arial,sans-serif;
+    letter-spacing:.25em;
+    color:#a48462
+}
+h1 {
+    font-weight:400;
+    font-style:italic;
+    font-size:clamp(25px,4.5vw,43px);
+    margin:5px 0 0;
+    line-height:1.12
+}
+.rule {
+    height:1px;
+    width:80px;
+    background:#c7ac8a;
+    margin:10px auto 0
+}
+.viewer {
+    position:relative;
+    flex:1;
+    min-height:0;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center
+}
+.slide {
+    position:absolute;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    min-height:0
+}
+.slide.active {
+    display:flex
+}
+.media-frame {
+    max-width:100%;
+    max-height:100%;
+    height:100%;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center
+}
+.media-frame img,.media-frame video {
+    display:block;
+    max-width:100%;
+    max-height:100%;
+    width:auto;
+    height:auto;
+    object-fit:contain;
+    border:7px solid #fffaf2;
+    box-shadow:0 6px 25px #61432630;
+    background:#191919
+}
+.media-frame img {
+    background:#fffaf2;
+    cursor:zoom-in
+}
+.zoom-hint {
+    position:absolute;
+    bottom:9px;
+    right:12px;
+    font:11px Arial,sans-serif;
+    color:#80674e;
+    background:#fff8e9d9;
+    padding:5px 9px;
+    border-radius:12px;
+    pointer-events:none
+}
+.lightbox {
+    position:fixed;
+    inset:0;
+    background:rgba(18,16,14,.96);
+    z-index:100;
+    display:none;
+    flex-direction:column
+}
+.lightbox.open {
+    display:flex
+}
+.zoom-toolbar {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    color:white;
+    font:13px Arial,sans-serif;
+    flex:none
+}
+.zoom-toolbar button {
+    background:#f5ecdc;
+    color:#493b30;
+    border:0;
+    border-radius:6px;
+    min-width:38px;
+    height:36px;
+    font:22px Arial,sans-serif;
+    cursor:pointer
+}
+.zoom-toolbar .close-zoom {
+    margin-left:16px
+}
+.zoom-area {
+    flex:1;
+    min-height:0;
+    overflow:auto;
+    display:flex;
+    align-items:safe center;
+    justify-content:safe center
+}
+.zoom-area img {
+    display:block;
+    max-width:none;
+    width:auto;
+    height:auto;
+    object-fit:contain;
+    user-select:none
+}
+nav {
+    width:100%;
+    flex:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(28px,6vw,68px);
+    padding-top:3px
+}
+nav button {
+    border:1px solid #d5bfa4;
+    background:#fff7e9;
+    color:#765b45;
+    border-radius:50%;
+    width:38px;
+    height:38px;
+    font:26px/1 Georgia,serif;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+    padding:0 0 4px;
+    transition:background .15s,transform .15s
+}
+nav button:hover {
+    background:#ead6b7;
+    transform:translateY(-1px)
+}
+nav button:focus-visible {
+    outline:2px solid #896544;
+    outline-offset:3px
+}
+.counter {
+    font:600 11px Arial,sans-serif;
+    letter-spacing:.18em;
+    color:#987d64;
+    min-width:48px;
+    text-align:center
+}
+@media(max-height:430px) {
+    .album {
+        padding:8px 14px;
+        gap:5px
+    }
+    h1 {
+        font-size:24px
+    }
+    .rule {
+        margin-top:5px
+    }
+    nav button {
+        width:30px;
+        height:30px;
+        font-size:22px
+    }
+    .media-frame img,.media-frame video {
+        border-width:4px
+    }
+}
+@media(prefers-reduced-motion:reduce) {
+    nav button {
+        transition:none
+    }
+}
+  </style>
+ </head>
+ <body>
+  <main class="album">
+   <header>
+    <div class="eyebrow">
+     TRAVEL MEMORIES · OCTOBER 2026
+    </div>
+    <h1>
+     Panama
+    </h1>
+    <div class="rule">
+    </div>
+   </header>
+   <section aria-label="Panama photo and video" class="viewer">
+    <div aria-hidden="false" class="slide active">
+     <div class="media-frame">
+      <img alt="A memory from Panama" id="panama-photo" src="panama.png" title="Click to enlarge"/>
+     </div>
+     <span class="zoom-hint">
+      Click photo to enlarge
+     </span>
+    </div>
+    <div aria-hidden="true" class="slide">
+     <div class="media-frame">
+      <video aria-label="Monkey video from Panama" controls="" playsinline="" preload="metadata" src="monkeys.MP4">
+       Your browser does not support video.
+      </video>
+     </div>
+    </div>
+   </section>
+   <nav aria-label="Browse Panama memories">
+    <button aria-label="Previous memory" id="prev" type="button">
+     ‹
+    </button>
+    <span aria-live="polite" class="counter" id="counter">
+     01 / 02
+    </span>
+    <button aria-label="Next memory" id="next" type="button">
+     ›
+    </button>
+   </nav>
+  </main>
+  <div aria-label="Enlarged Panama photo" aria-modal="true" class="lightbox" id="lightbox" role="dialog">
+   <div class="zoom-toolbar">
+    <button aria-label="Zoom out" id="zoom-out" type="button">
+     −
+    </button>
+    <span id="zoom-level">
+     Fit
+    </span>
+    <button aria-label="Zoom in" id="zoom-in" type="button">
+     +
+    </button>
+    <button aria-label="Close enlarged photo" class="close-zoom" id="close-zoom" type="button">
+     ×
+    </button>
+   </div>
+   <div class="zoom-area" id="zoom-area">
+    <img alt="Enlarged Panama photo" id="large-photo" src="panama.png"/>
+   </div>
+  </div>
+  <script>
+   // Photo and video slides
+const slides = [...document.querySelectorAll(".slide")];
+const video = document.querySelector("video");
+const counter = document.getElementById("counter");
+let current = 0;
+
+function show(index) {
+    if (current === 1) video.pause();
+
+    current = (index + slides.length) % slides.length;
+
+    slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === current);
+        slide.setAttribute("aria-hidden", String(i !== current));
+    });
+
+    counter.textContent = `0${current + 1} / 0${slides.length}`;
+}
+
+document.getElementById("prev").addEventListener("click", () => show(current - 1));
+document.getElementById("next").addEventListener("click", () => show(current + 1));
+
+// Enlarged photo viewer
+const lightbox = document.getElementById("lightbox");
+const area = document.getElementById("zoom-area");
+const large = document.getElementById("large-photo");
+const level = document.getElementById("zoom-level");
+let zoom = 1;
+
+function setZoom(value) {
+    zoom = Math.min(4, Math.max(1, value));
+
+    const naturalW = large.naturalWidth || 1024;
+    const naturalH = large.naturalHeight || 1536;
+    const fit = Math.min(area.clientWidth / naturalW, area.clientHeight / naturalH);
+
+    large.style.width = (naturalW * fit * zoom) + "px";
+    large.style.height = (naturalH * fit * zoom) + "px";
+    level.textContent = zoom === 1 ? "Fit" : Math.round(zoom * 100) + "%";
+}
+
+function openPhoto() {
+    lightbox.classList.add("open");
+    setZoom(1);
+    document.getElementById("close-zoom").focus();
+}
+
+function closePhoto() {
+    lightbox.classList.remove("open");
+    document.getElementById("panama-photo").focus();
+}
+
+document.getElementById("panama-photo").addEventListener("click", openPhoto);
+document.getElementById("zoom-in").addEventListener("click", () => setZoom(zoom + 0.5));
+document.getElementById("zoom-out").addEventListener("click", () => setZoom(zoom - 0.5));
+document.getElementById("close-zoom").addEventListener("click", closePhoto);
+
+lightbox.addEventListener("click", (event) => {
+    if (event.target === lightbox) closePhoto();
+});
+
+// Keyboard controls
+document.addEventListener("keydown", (event) => {
+    if (lightbox.classList.contains("open")) {
+        if (event.key === "Escape") closePhoto();
+        if (event.key === "+" || event.key === "=") setZoom(zoom + 0.5);
+        if (event.key === "-") setZoom(zoom - 0.5);
+        return;
+    }
+
+    if (event.key === "ArrowLeft") show(current - 1);
+    if (event.key === "ArrowRight") show(current + 1);
+});
+
+window.addEventListener("resize", () => {
+    if (lightbox.classList.contains("open")) setZoom(zoom);
+});
+
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) video.pause();
+});
+  </script>
+ </body>
+</html>

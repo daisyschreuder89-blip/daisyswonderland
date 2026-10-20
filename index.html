@@ -1064,6 +1064,20 @@
             z-index: 30;
             cursor: pointer;
         }
+
+        /* Panama hotspot — glowing house */
+        .panama-hotspot {
+            position: absolute;
+            left: 4.5%;
+            top: 31%;
+            width: 2%;
+            height: 3%;
+            padding: 0;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            z-index: 5;
+        }
     </style>
 </head>
 
@@ -1089,6 +1103,7 @@
         <button class="daisy-hotspot" type="button" aria-label="Open Daisy's Pi"></button>
         <button class="korean-hotspot" type="button" aria-label="Open Korean study"></button>
         <button class="spanish-hotspot" type="button" aria-label="Open Spanish study"></button>
+        <button class="panama-hotspot" type="button" aria-label="Panama Memories"></button>
 
         <div class="cat-eye eye-left"></div>
         <div class="cat-eye eye-right"></div>
@@ -1116,6 +1131,8 @@
             <span class="raindrop"></span>
             <span class="raindrop"></span>
         </div>
+
+
 
     </main>
 
@@ -1147,6 +1164,7 @@
         const miniWindowClose = document.querySelector(".mini-window-close");
         const miniWindowFrame = document.querySelector(".mini-window-frame");
         const miniWindowTitle = document.querySelector(".mini-window-title");
+        const panama = document.querySelector(".panama-hotspot");
 
 
         function openMiniWindow(page, title) {
@@ -1193,6 +1211,10 @@
 
         catGallery.addEventListener("click", () => {
             openMiniWindow("cat-gallery.html", "Cat Gallery");
+        });
+
+        panama.addEventListener("click", () => {
+            openMiniWindow("panama.html", "Panama Memories");
         });
 
 
