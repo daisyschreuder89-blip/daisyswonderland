@@ -1078,6 +1078,59 @@
             cursor: pointer;
             z-index: 5;
         }
+        /* Panama house — glowing halo */
+.panama-hotspot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+
+    background: rgba(255, 235, 175, 0.35);
+    filter: blur(8px);
+    mix-blend-mode: screen;
+
+    opacity: 0;
+    transition: background-color .2s ease, opacity .2s ease;
+}
+
+.panama-hotspot:hover::before,
+.panama-hotspot:focus-visible::before {
+    background: rgba(255, 235, 175, 0.4);
+    opacity: 1;
+}
+
+
+/* Panama house — tooltip */
+.panama-hotspot::after {
+    content: "Panama Memories";
+    position: absolute;
+    left: 50%;
+    bottom: -42px;
+    transform: translateX(-50%) translateY(5px);
+
+    padding: 7px 10px;
+    border: 1px solid rgba(255, 204, 125, 0.75);
+    border-radius: 999px;
+    background: rgba(5, 16, 28, 0.94);
+    color: #ffd99a;
+
+    font: 14px/1.2 Georgia, serif;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.panama-hotspot:hover::after,
+.panama-hotspot:focus-visible::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.panama-hotspot:focus-visible {
+    outline: 3px solid #fff2c8;
+    outline-offset: 5px;
+}
     </style>
 </head>
 
@@ -1103,7 +1156,7 @@
         <button class="daisy-hotspot" type="button" aria-label="Open Daisy's Pi"></button>
         <button class="korean-hotspot" type="button" aria-label="Open Korean study"></button>
         <button class="spanish-hotspot" type="button" aria-label="Open Spanish study"></button>
-        <button class="panama-hotspot" type="button" aria-label="Panama Memories"></button>
+        <button class="panama-hotspot breathing-hotspot" type="button" aria-label="Panama Memories"></button>
 
         <div class="cat-eye eye-left"></div>
         <div class="cat-eye eye-right"></div>
