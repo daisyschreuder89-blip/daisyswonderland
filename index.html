@@ -1078,59 +1078,75 @@
             cursor: pointer;
             z-index: 5;
         }
+
         /* Panama house — glowing halo */
-.panama-hotspot::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
+        .panama-hotspot::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
 
-    background: rgba(255, 235, 175, 0.35);
-    filter: blur(8px);
-    mix-blend-mode: screen;
+            background: rgba(255, 235, 175, 0.35);
+            filter: blur(8px);
+            mix-blend-mode: screen;
 
-    opacity: 0;
-    transition: background-color .2s ease, opacity .2s ease;
-}
+            opacity: 0;
+            transition: background-color .2s ease, opacity .2s ease;
+        }
 
-.panama-hotspot:hover::before,
-.panama-hotspot:focus-visible::before {
-    background: rgba(255, 235, 175, 0.4);
-    opacity: 1;
-}
+        .panama-hotspot:hover::before,
+        .panama-hotspot:focus-visible::before {
+            background: rgba(255, 235, 175, 0.4);
+            opacity: 1;
+        }
 
 
-/* Panama house — tooltip */
-.panama-hotspot::after {
-    content: "Panama Memories";
-    position: absolute;
-    left: 50%;
-    bottom: -42px;
-    transform: translateX(-50%) translateY(5px);
+        /* Panama house — tooltip */
+        .panama-hotspot::after {
+            content: "Panama Memories";
+            position: absolute;
+            left: 50%;
+            bottom: -42px;
+            transform: translateX(-50%) translateY(5px);
 
-    padding: 7px 10px;
-    border: 1px solid rgba(255, 204, 125, 0.75);
-    border-radius: 999px;
-    background: rgba(5, 16, 28, 0.94);
-    color: #ffd99a;
+            padding: 7px 10px;
+            border: 1px solid rgba(255, 204, 125, 0.75);
+            border-radius: 999px;
+            background: rgba(5, 16, 28, 0.94);
+            color: #ffd99a;
 
-    font: 14px/1.2 Georgia, serif;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 180ms ease, transform 180ms ease;
-}
+            font: 14px/1.2 Georgia, serif;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 180ms ease, transform 180ms ease;
+        }
 
-.panama-hotspot:hover::after,
-.panama-hotspot:focus-visible::after {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-}
+        .panama-hotspot:hover::after,
+        .panama-hotspot:focus-visible::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
 
-.panama-hotspot:focus-visible {
-    outline: 3px solid #fff2c8;
-    outline-offset: 5px;
-}
+        .panama-hotspot:focus-visible {
+            outline: 3px solid #fff2c8;
+            outline-offset: 5px;
+        }
+
+        /* JavaScript + DOM course hotspot */
+        .dom-hotspot {
+            position: absolute;
+            right: 21%;
+            top: 74%;
+            width: 3%;
+            height: 5%;
+
+            background: transparent;
+            border: 0;
+            padding: 0;
+            cursor: pointer;
+            z-index: 5;
+        }
     </style>
 </head>
 
@@ -1157,7 +1173,7 @@
         <button class="korean-hotspot" type="button" aria-label="Open Korean study"></button>
         <button class="spanish-hotspot" type="button" aria-label="Open Spanish study"></button>
         <button class="panama-hotspot breathing-hotspot" type="button" aria-label="Panama Memories"></button>
-
+        <button class="dom-hotspot" type="button" aria-label="Open JavaScript and DOM course"></button>
         <div class="cat-eye eye-left"></div>
         <div class="cat-eye eye-right"></div>
 
@@ -1218,6 +1234,9 @@
         const miniWindowFrame = document.querySelector(".mini-window-frame");
         const miniWindowTitle = document.querySelector(".mini-window-title");
         const panama = document.querySelector(".panama-hotspot");
+        const domHotspot = document.querySelector(".dom-hotspot");
+
+
 
 
         function openMiniWindow(page, title) {
@@ -1269,7 +1288,9 @@
         panama.addEventListener("click", () => {
             openMiniWindow("panama.html", "Panama Memories");
         });
-
+        domHotspot.addEventListener("click", () => {
+            openMiniWindow("dom-course.html", "JavaScript + DOM");
+        });
 
 
         //*computer**//

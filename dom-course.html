@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JavaScript + DOM · Daisy's Wonderland</title>
+  <style>
+    :root {
+      --paper: #f7f3e9;
+      --ink: #33483e;
+      --sage: #e2e9de;
+      --border: #c8d1c4;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .course {
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .heading {
+      flex: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--border);
+      background: #f5f1e6;
+    }
+
+    .eyebrow {
+      font: 10px/1.5 Arial, sans-serif;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #738579;
+    }
+
+    h1 { margin: 2px 0 0; font-size: clamp(19px, 3vw, 28px); font-weight: normal; }
+    .heading-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: end; }
+
+    button, .pdf-link {
+      border: 1px solid #aebdae;
+      border-radius: 6px;
+      padding: 8px 11px;
+      background: #fffdf7;
+      color: var(--ink);
+      font: 12px Arial, sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    button:hover, .pdf-link:hover { background: var(--sage); }
+    button:focus-visible, a:focus-visible { outline: 2px solid #6b8b75; outline-offset: 2px; }
+
+    .workspace { display: flex; flex: 1; min-height: 0; }
+    .index {
+      flex: 0 0 255px;
+      overflow-y: auto;
+      padding: 22px 14px;
+      border-right: 1px solid var(--border);
+      background: #f3f2e9;
+    }
+    .index-title {
+      margin: 0 0 12px 10px;
+      font: 11px Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      color: #738579;
+    }
+    .module-link {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: 0;
+      background: transparent;
+      padding: 10px 11px;
+      margin-bottom: 3px;
+      border-radius: 6px;
+      font: 13px/1.45 Georgia, serif;
+    }
+    .module-link.active { background: var(--sage); font-weight: bold; }
+    .module-link .number {
+      display: inline-block;
+      width: 28px;
+      color: #7b927f;
+      font: 11px Arial, sans-serif;
+    }
+    .reader { flex: 1; min-width: 0; background: #d9dfd8; }
+    .reader iframe { display: block; width: 100%; height: 100%; border: 0; }
+    .course.full .index { display: none; }
+
+    .reader-note {
+      display: none;
+      padding: 10px;
+      font: 12px/1.5 Arial, sans-serif;
+    }
+    .reader-note a { color: #345c45; }
+
+    @media (max-width: 620px) {
+      .heading { padding: 10px; align-items: flex-start; }
+      .heading-actions { gap: 4px; }
+      .heading-actions button, .heading-actions a { font-size: 11px; padding: 7px; }
+      .index { flex-basis: 155px; padding: 12px 5px; }
+      .module-link { font-size: 11px; padding: 9px 6px; }
+      .module-link .number { width: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="course" id="course">
+    <header class="heading">
+      <div>
+        <div class="eyebrow">Daisy's Wonderland · Course Library</div>
+        <h1>JavaScript + DOM</h1>
+      </div>
+      <div class="heading-actions">
+        <button id="toggle-index" type="button">Full-page view</button>
+        <a class="pdf-link" id="open-pdf" href="JavaScript_DOM_Course_Reference_Part1.pdf" target="_blank" rel="noopener">Open PDF ↗</a>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <nav class="index" aria-label="Course index">
+        <p class="index-title">Contents · Part I</p>
+        <div id="module-list"></div>
+      </nav>
+      <main class="reader">
+        <iframe id="pdf-reader" title="JavaScript and DOM course PDF" src="JavaScript_DOM_Course_Reference_Part1.pdf#page=2&view=FitH"></iframe>
+        <div class="reader-note">If the PDF doesn't appear in your browser, use <a href="JavaScript_DOM_Course_Reference_Part1.pdf" target="_blank">Open PDF</a>.</div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Index entries are defined once here. No lesson text needs to be copied.
+    // Pages are 1-based PDF page numbers, including the cover.
+    const modules = [
+      { number: "↗", title: "Cover / How to Use", page: 1 },
+      { number: "00", title: "Quick-Look Master Map", page: 2 },
+      { number: "01", title: "JavaScript Talks to HTML", page: 3 },
+      { number: "02", title: "Creating and Removing HTML", page: 4 },
+      { number: "03", title: "Events: WHEN JavaScript Runs", page: 5 },
+      { number: "04", title: "JavaScript Logic and Memory", page: 5 },
+      { number: "05", title: "JavaScript Grammar Reference", page: 6 },
+      { number: "06", title: "User Input", page: 8 },
+      { number: "07", title: "Arrays", page: 9 },
+      { number: "08", title: "Loops", page: 10 },
+      { number: "09", title: "Data Forms and Data Flow", page: 10 },
+      { number: "10", title: "Array + Loop + DOM Integration", page: 11 },
+      { number: "★", title: "Next Chapter: Functions", page: 12 }
+    ];
+
+    const pdfName = "JavaScript_DOM_Course_Reference_Part1.pdf";
+    const list = document.getElementById("module-list");
+    const reader = document.getElementById("pdf-reader");
+    const openPdf = document.getElementById("open-pdf");
+    const course = document.getElementById("course");
+    const toggleIndex = document.getElementById("toggle-index");
+
+    modules.forEach((module, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "module-link";
+      button.innerHTML = `<span class="number">${module.number}</span>${module.title}`;
+      button.addEventListener("click", () => goToPage(module.page, index));
+      list.appendChild(button);
+    });
+
+    function goToPage(page, activeIndex) {
+      // A unique query string forces the embedded PDF viewer to navigate.
+      // Changing only #page often gets ignored by Chrome's PDF viewer.
+      const url = `${pdfName}?chapter=${page}#page=${page}&view=FitH`;
+      reader.src = url;
+      openPdf.href = url;
+      document.querySelectorAll(".module-link").forEach((button, index) => {
+        button.classList.toggle("active", index === activeIndex);
+      });
+    }
+
+    toggleIndex.addEventListener("click", () => {
+      const full = course.classList.toggle("full");
+      toggleIndex.textContent = full ? "Show index" : "Full-page view";
+    });
+
+    goToPage(2, 1);
+  </script>
+</body>
+</html>
