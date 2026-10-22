@@ -617,9 +617,9 @@
         const observing = analyzeObservingWindow(hourlyWeather);
         const weather = observing.best;
         const conditions = estimateConditions(weather);
-        const planets = bestPlanetTargets(samples).slice(0, 3);
+        const planets = bestPlanetTargets(samples).filter(p => p.magnitude <= 2);
         const deep = bestDeepSkyTargets(samples).slice(0, 5);
-        const targets = [...planets, ...deep].sort((a, b) => altitudeRating(b.altitude, b.difficulty || 1) - altitudeRating(a.altitude, a.difficulty || 1)).slice(0, 6);
+        const targets = [...planets, ...deep].slice(0, 6);
         const heading = conditionText(observing.total);
         document.querySelector("#app").innerHTML = `
       <section class="grid">
