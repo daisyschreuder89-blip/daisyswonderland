@@ -1147,6 +1147,99 @@
             cursor: pointer;
             z-index: 5;
         }
+
+        /* ========================================
+   REUSABLE MAGICAL DUST EFFECT
+   ======================================== */
+
+.magical-dust {
+    overflow: visible;
+}
+
+/* Golden particles */
+.magical-dust::before,
+.magical-dust::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+
+    background: #ffe6a0;
+
+    box-shadow:
+        12px -8px 0 0 #fff3c7,
+        -10px -15px 0 -1px #ffd47c,
+        18px -22px 0 -1px #ffe6a0;
+}
+
+/* Particle positions */
+.magical-dust::before {
+    left: 25%;
+    top: 50%;
+}
+
+.magical-dust::after {
+    left: 65%;
+    top: 45%;
+}
+
+/* Desktop: sparkle continuously while hovering */
+@media (hover: hover) {
+    .magical-dust:hover::before,
+    .magical-dust:hover::after {
+        animation: magicalDust 1.5s ease-out infinite;
+    }
+
+    .magical-dust:hover::after {
+        animation-delay: 0.2s;
+    }
+}
+
+/* Keyboard focus */
+.magical-dust:focus-visible::before,
+.magical-dust:focus-visible::after {
+    animation: magicalDust 1.5s ease-out infinite;
+}
+
+/* Mobile: sparkle briefly when tapped */
+@media (hover: none) {
+    .magical-dust:active::before,
+    .magical-dust:active::after {
+        animation: magicalDust 0.8s ease-out both;
+    }
+}
+
+/* Floating animation */
+@keyframes magicalDust {
+    0% {
+        opacity: 0;
+        transform: translateY(5px) scale(0.5);
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    70% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-22px) scale(1);
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .magical-dust::before,
+    .magical-dust::after {
+        animation: none !important;
+    }
+}
     </style>
 </head>
 
@@ -1160,7 +1253,7 @@
         <button class="globe-hotspot breathing-hotspot" type="button" aria-label="Open Qingdao time"></button>
         <button class="weather-hotspot breathing-hotspot" href="weather.html" aria-label="Should I go out?"></button>
         <button class="LOVEPIG-hotspot breathing-hotspot" type="button" aria-label="How much love💖 today?"></button>
-        <button class="catgallery-hotspot breathing-hotspot" type="button" aria-label="check out cat photos"></button>
+        <button class="catgallery-hotspot magical-dust" type="button" aria-label="check out cat photos"></button>
         <button class="left-cat-hotspot" type="button" aria-label="Make the left cat meow"></button>
         <button class="fireplace-hotspot" type="button" aria-label="Turn fireplace on"></button>
         <button class="bathtub-hotspot" type="button" aria-label="Make bathtub bubbles"></button>
@@ -1170,10 +1263,10 @@
         <span class="shooting-star" aria-hidden="true"></span>
         <button class="computer-hotspot" type="button" aria-label="Start computer"></button>
         <button class="daisy-hotspot" type="button" aria-label="Open Daisy's Pi"></button>
-        <button class="korean-hotspot" type="button" aria-label="Open Korean study"></button>
-        <button class="spanish-hotspot" type="button" aria-label="Open Spanish study"></button>
+        <button class="korean-hotspot magical-dust" type="button" aria-label="Open Korean study"></button>
+        <button class="spanish-hotspot magical-dust" type="button" aria-label="Open Spanish study"></button>
         <button class="panama-hotspot breathing-hotspot" type="button" aria-label="Panama Memories"></button>
-        <button class="dom-hotspot" type="button" aria-label="Open JavaScript and DOM course"></button>
+        <button class="dom-hotspot magical-dust" type="button" aria-label="Open JavaScript and DOM course"></button>
         <div class="cat-eye eye-left"></div>
         <div class="cat-eye eye-right"></div>
 
