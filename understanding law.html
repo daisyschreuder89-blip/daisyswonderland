@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vintage Course Book · Wonderland Library</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=IM+Fell+English:ital@0;1&display=swap");
+
+    :root {
+      --leather: #43291f;
+      --leather-dark: #28170f;
+      --paper: #f3e4c4;
+      --paper-light: #fbf2dc;
+      --ink: #493323;
+      --muted: #80694f;
+      --gold: #b78b4e;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100dvh;
+      padding: 16px;
+      background: radial-gradient(circle at 50% 25%, #624532, #21150f 80%);
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .book-cover {
+      max-width: 1200px;
+      height: calc(100dvh - 32px);
+      min-height: 440px;
+      margin: auto;
+      padding: 12px;
+      border: 2px solid #8a623c;
+      border-radius: 18px;
+      background: var(--leather);
+      box-shadow: 0 18px 60px #0009, inset 0 0 0 5px var(--leather-dark);
+    }
+
+    .book {
+      height: 100%;
+      display: grid;
+      grid-template-columns: minmax(225px, 31%) minmax(0, 1fr);
+      overflow: hidden;
+      border-radius: 7px;
+      background: var(--paper);
+      box-shadow: inset 0 0 35px #9a754027;
+    }
+
+    .left-page {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      border-right: 3px double #b79c70;
+      padding: 25px 22px 18px;
+      background: linear-gradient(100deg, #ead6ad, var(--paper-light) 80%, #e6d1a9);
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font: 10px/1.5 Arial, sans-serif;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 13px 0 3px;
+      font-size: clamp(25px, 3.3vw, 42px);
+      font-weight: normal;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .ornament {
+      margin: 10px 0 15px;
+      text-align: center;
+      color: #9c713f;
+      font-size: 24px;
+    }
+
+    .contents-heading {
+      margin: 0 0 10px;
+      padding-bottom: 9px;
+      border-bottom: 1px solid #bca27b;
+      color: #745438;
+      text-align: center;
+      font: 11px Arial, sans-serif;
+      letter-spacing: .17em;
+      text-transform: uppercase;
+    }
+
+    .chapters {
+      min-height: 0;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .chapter {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      padding: 11px 8px;
+      border: 0;
+      border-bottom: 1px dotted #bca27b;
+      background: transparent;
+      color: var(--ink);
+      text-align: left;
+      font: 14px/1.4 Georgia, serif;
+      cursor: pointer;
+    }
+
+    .chapter:hover,
+    .chapter.active {
+      background: #e9d6ad;
+    }
+
+    .chapter.active {
+      font-weight: bold;
+    }
+
+    .chapter-number {
+      color: #9b784b;
+      font-size: 12px;
+      flex: none;
+    }
+
+    .footer-note {
+      margin: 12px 0 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .right-page {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+      background: var(--paper-light);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px 15px;
+      border-bottom: 1px solid #c9b18b;
+      background: #f1e1be;
+    }
+
+    .current-title {
+      font-size: 14px;
+      color: #6e4c2d;
+    }
+
+    .actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .actions button,
+    .actions a {
+      display: inline-block;
+      padding: 8px 10px;
+      border: 1px solid #bca17a;
+      border-radius: 4px;
+      background: #fff7e5;
+      color: var(--ink);
+      font: 12px Arial, sans-serif;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .actions button:hover,
+    .actions a:hover {
+      background: #e8d4aa;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid #73532c;
+      outline-offset: 2px;
+    }
+
+    .reader {
+      flex: 1;
+      min-height: 0;
+      background: #d9d5c9;
+    }
+
+    .reader iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .empty {
+      display: none;
+      height: 100%;
+      padding: 40px;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* Full-page view: remove the decorative cover and contents to give PDF maximum room. */
+
+    body.full-view {
+      padding: 0;
+      background: var(--paper-light);
+    }
+
+    body.full-view .book-cover {
+      max-width: none;
+      height: 100dvh;
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    body.full-view .book {
+      display: block;
+      border-radius: 0;
+    }
+
+    body.full-view .left-page {
+      display: none;
+    }
+
+    body.full-view .right-page {
+      height: 100%;
+    }
+
+    @media (max-width: 650px) {
+      body {
+        padding: 6px;
+      }
+
+      .book-cover {
+        height: calc(100dvh - 12px);
+        padding: 6px;
+        border-radius: 10px;
+      }
+
+      .book {
+        grid-template-columns: minmax(125px, 37%) minmax(0, 1fr);
+      }
+
+      .left-page {
+        padding: 15px 8px 10px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      .subtitle {
+        font-size: 12px;
+      }
+
+      .ornament {
+        margin: 7px 0;
+      }
+
+      .chapter {
+        font-size: 12px;
+        padding: 9px 3px;
+      }
+
+      .chapter-number {
+        font-size: 10px;
+      }
+
+      .toolbar {
+        padding: 8px;
+      }
+
+      .current-title {
+        font-size: 12px;
+      }
+
+      .actions button,
+      .actions a {
+        font-size: 11px;
+        padding: 7px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Antique scholarly edition — decorative styling only */
+
+    :root {
+      --ink: #49301c;
+      --muted: #80603b;
+      --paper: #efdb9e;
+      --paper-light: #f8e9bd;
+      --gold: #b78b4e;
+    }
+
+    body {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      background: radial-gradient(ellipse at 50% 15%, #70513a, #25160f 80%);
+    }
+
+    .book-cover {
+      padding: 19px;
+      border-radius: 13px;
+      border: 1px solid #b58b4e;
+      background: repeating-linear-gradient(115deg, #ffffff03 0 1px, transparent 1px 4px), linear-gradient(100deg, #321a12, #65402a 45%, #351d14);
+      box-shadow: 0 18px 45px #0009, inset 0 0 0 5px #321c13, inset 0 0 0 7px #9b733e, inset 0 0 0 10px #4d2c1b;
+    }
+
+    .book {
+      border-radius: 3px;
+      grid-template-columns: minmax(250px, 34%) minmax(0, 1fr);
+      box-shadow: 0 2px 0 #bba16c, 0 5px 0 #e0c68b, 0 7px 0 #a98a53, 0 9px 0 #d7bc7e, 0 11px 0 #856638;
+    }
+
+    .left-page {
+      position: relative;
+      padding: 28px 25px 20px;
+      border-right: 0;
+      background: radial-gradient(ellipse at 45% 35%, #fff1c8 0%, transparent 75%), repeating-linear-gradient(95deg, #79521c08 0 1px, transparent 1px 5px), linear-gradient(90deg, #c8a76a, #efdb9e 5%, #f4e3b2 87%, #b99a62 100%);
+      box-shadow: inset 0 0 30px #8b602b33;
+    }
+
+    .left-page::before {
+      content: "";
+      position: absolute;
+      inset: 9px 13px 9px 9px;
+      border: 3px double #a17b43;
+      pointer-events: none;
+    }
+
+    .left-page::after {
+      content: "❧";
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #8b6335;
+      background: #efdb9e;
+      padding: 0 9px;
+      font-size: 22px;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      font: 600 12px/1.4 "Cormorant Garamond", Georgia, serif;
+      letter-spacing: .19em;
+      color: #78552f;
+    }
+
+    h1 {
+      font-family: "IM Fell English", Georgia, serif;
+      font-size: clamp(27px, 4vw, 48px);
+      line-height: 1.08;
+      margin: 18px 0 8px;
+      color: #52341d;
+      text-shadow: 0 1px #fff4cf;
+    }
+
+    .subtitle {
+      font-size: 17px;
+      font-style: italic;
+      line-height: 1.25;
+    }
+
+    .ornament {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      font-size: 31px;
+      margin: 12px 0;
+    }
+
+    .ornament::before,
+    .ornament::after {
+      content: "";
+      flex: 1;
+      height: 3px;
+      border-top: 1px solid #ad8950;
+      border-bottom: 1px solid #ad8950;
+    }
+
+    .contents-heading {
+      font: 600 15px "Cormorant Garamond", Georgia, serif;
+      letter-spacing: .21em;
+      border-bottom: 3px double #a88750;
+    }
+
+    .chapter {
+      font: 600 17px/1.25 "Cormorant Garamond", Georgia, serif;
+      padding: 12px 4px;
+      border-bottom: 1px dotted #a88750;
+    }
+
+    .chapter:hover,
+    .chapter.active {
+      background: linear-gradient(90deg, #b58b4933, #b58b4908);
+      color: #713c22;
+    }
+
+    .chapter.active {
+      box-shadow: inset 2px 0 #9c6b35;
+      padding-left: 8px;
+    }
+
+    .chapter-number {
+      font: 500 14px "IM Fell English", Georgia, serif;
+    }
+
+    .footer-note {
+      font-size: 13px;
+      font-style: italic;
+      border-top: 3px double #a88750;
+      padding-top: 9px;
+    }
+
+    .right-page {
+      background: #f4e4b6;
+      box-shadow: inset 10px 0 15px -10px #5d391c;
+    }
+
+    .toolbar {
+      background: linear-gradient(90deg, #d6bb80, #f4e3b1 8%, #f8e9bd 90%, #e5cb91);
+      border-bottom: 3px double #aa854e;
+      padding: 12px 17px;
+    }
+
+    .current-title {
+      font: italic 17px "IM Fell English", Georgia, serif;
+    }
+
+    .actions button,
+    .actions a {
+      font: 600 15px "Cormorant Garamond", Georgia, serif;
+      border: 3px double #a17b43;
+      border-radius: 0;
+      background: #f7e7b9;
+      padding: 5px 10px;
+    }
+
+    .actions button:hover,
+    .actions a:hover {
+      background: #e4ca8e;
+    }
+
+    .reader {
+      background: #e8d5a4;
+      padding: 8px 8px 8px 12px;
+    }
+
+    body.full-view .book {
+      box-shadow: none;
+    }
+
+    body.full-view .reader {
+      padding: 0;
+    }
+
+    @media(max-width:650px) {
+      .book-cover {
+        padding: 10px;
+      }
+
+      .book {
+        grid-template-columns: minmax(115px, 36%) minmax(0, 1fr);
+      }
+
+      .left-page {
+        padding: 20px 12px 12px;
+      }
+
+      .left-page::before {
+        inset: 5px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .eyebrow {
+        font-size: 9px;
+        letter-spacing: .1em;
+      }
+
+      .subtitle {
+        font-size: 13px;
+      }
+
+      .chapter {
+        font-size: 14px;
+        padding: 8px 2px;
+      }
+
+      .chapter-number {
+        font-size: 11px;
+      }
+
+      .contents-heading {
+        font-size: 12px;
+      }
+
+      .footer-note {
+        font-size: 10px;
+      }
+
+      .toolbar {
+        padding: 8px;
+      }
+
+      .current-title {
+        font-size: 14px;
+      }
+
+      .actions button,
+      .actions a {
+        font-size: 13px;
+        padding: 4px 6px;
+      }
+
+      .reader {
+        padding: 3px;
+      }
+
+    }
+
+    /* ========================================
+   IMPROVED COURSE INDEX SCROLLING
+   ======================================== */
+
+    .left-page {
+      display: block;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .chapters {
+      overflow: visible;
+      min-height: auto;
+    }
+    .left-page::before {
+    display: none;
+}
+  </style>
+</head>
+
+<body>
+  <div class="book-cover">
+    <main class="book">
+      <aside class="left-page" aria-label="Course table of contents">
+        <div class="eyebrow">Daisy's Wonderland Library</div>
+        <h1 id="course-title">My Course</h1>
+        <div class="subtitle" id="course-subtitle">A collection of study guides</div>
+        <div class="ornament" aria-hidden="true">❦</div>
+        <div class="contents-heading">Contents · 目录</div>
+        <nav class="chapters" id="chapter-list" aria-label="Chapters"></nav>
+        <p class="footer-note">A little library of learning</p>
+      </aside>
+
+      <section class="right-page" aria-label="PDF reader">
+        <div class="toolbar">
+          <span class="current-title" id="current-title">Select a chapter</span>
+          <div class="actions">
+            <button id="full-page" type="button">Full-page view</button>
+            <a id="open-pdf" href="#" target="_blank" rel="noopener">Open PDF ↗</a>
+          </div>
+        </div>
+        <div class="reader">
+          <iframe id="pdf-reader" title="Course PDF reader"></iframe>
+          <div class="empty" id="empty-message">Add your PDF filenames to the chapters list to begin.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    /* =======================================================
+       CUSTOMIZE YOUR COURSE HERE
+       1. Change the title and subtitle.
+       2. Put PDF files in the same folder as this HTML file.
+       3. Add one entry per module/chapter below.
+       4. "page" is the starting PDF page (counting from 1).
+       Multiple entries can point to the SAME PDF.
+       ======================================================= */
+
+    const courseTitle = "Understanding LAw";
+    const courseSubtitle = "法学课程 · Legal Reasoning, Justice and Landmark Cases";
+
+    const chapters = [
+      { title: "Module 0 · Foundation", pdf: "law module 0.pdf", page: 1 },
+      { title: "Module 1 · How Lawyers Think", pdf: "law module 1.pdf", page: 1 },
+      { title: "Module 2 · How Judges Think?", pdf: "law module 2.pdf", page: 1 },
+      { title: "Module 3 · Justice and Ethics", pdf: "law module 3.pdf", page: 1 },
+      { title: "Module 4 · Crime and Criminology", pdf: "law module 4.pdf", page: 1 },
+      { title: "Module 5 · Landmark Cases", pdf: "law module 5.pdf", page: 1 }
+
+    ];
+
+    /* Everything below works automatically. */
+    const list = document.getElementById("chapter-list");
+    const reader = document.getElementById("pdf-reader");
+    const openPdf = document.getElementById("open-pdf");
+    const currentTitle = document.getElementById("current-title");
+    const fullPageButton = document.getElementById("full-page");
+
+    document.getElementById("course-title").textContent = courseTitle;
+    document.getElementById("course-subtitle").textContent = courseSubtitle;
+    document.title = `${courseTitle} · Wonderland Library`;
+
+    function showChapter(index) {
+      const chapter = chapters[index];
+      if (!chapter) return;
+
+      // Query string forces Chrome's built-in PDF viewer to navigate reliably.
+      const separator = chapter.pdf.includes("?") ? "&" : "?";
+      const url = `${chapter.pdf}${separator}chapter=${index + 1}#page=${chapter.page}&view=FitH`;
+
+      reader.src = url;
+      openPdf.href = url;
+      currentTitle.textContent = chapter.title;
+
+      list.querySelectorAll(".chapter").forEach((button, i) => {
+        button.classList.toggle("active", i === index);
+        if (i === index) button.setAttribute("aria-current", "page");
+        else button.removeAttribute("aria-current");
+      });
+    }
+
+    function toRoman(n) {
+      const symbols = [
+        [1000, "M"],
+        [900, "CM"],
+        [500, "D"],
+        [400, "CD"],
+        [100, "C"],
+        [90, "XC"],
+        [50, "L"],
+        [40, "XL"],
+        [10, "X"],
+        [9, "IX"],
+        [5, "V"],
+        [4, "IV"],
+        [1, "I"]
+      ];
+      let result = "";
+      for (const [value, symbol] of symbols) {
+        while (n >= value) {
+          result += symbol;
+          n -= value;
+        }
+      }
+      return result;
+    }
+    chapters.forEach((chapter, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "chapter";
+      const name = document.createElement("span");
+      name.textContent = chapter.title;
+      const number = document.createElement("span");
+      number.className = "chapter-number";
+      number.textContent = toRoman(index + 1);
+      button.append(name, number);
+      button.addEventListener("click", () => showChapter(index));
+      list.appendChild(button);
+    });
+
+    fullPageButton.addEventListener("click", () => {
+      const isFull = document.body.classList.toggle("full-view");
+      fullPageButton.textContent = isFull ? "Show book" : "Full-page view";
+    });
+
+    if (chapters.length > 0) {
+      showChapter(0);
+    } else {
+      reader.style.display = "none";
+      document.getElementById("empty-message").style.display = "grid";
+      openPdf.style.display = "none";
+    }
+  </script>
+</body>
+
+</html>

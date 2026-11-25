@@ -1149,97 +1149,121 @@
         }
 
         /* ========================================
+   BOOKSHELF COURSE HOTSPOT
+   ======================================== */
+
+        .course-hotspot {
+            position: absolute;
+
+            /* Adjust to match the book behind the ladder */
+            left: 25%;
+            top: 26%;
+            width: 3%;
+            height: 14%;
+
+            border: none;
+            background: transparent;
+            padding: 0;
+            cursor: pointer;
+        
+            z-index: 10;
+        }
+
+        /* ========================================
    REUSABLE MAGICAL DUST EFFECT
    ======================================== */
 
-.magical-dust {
-    overflow: visible;
-}
+        .magical-dust {
+            overflow: visible;
+        }
 
-/* Golden particles */
-.magical-dust::before,
-.magical-dust::after {
-    content: "";
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    pointer-events: none;
-    opacity: 0;
+        /* Golden particles */
+        .magical-dust::before,
+        .magical-dust::after {
+            content: "";
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
 
-    background: #ffe6a0;
+            background: #ffe6a0;
 
-    box-shadow:
-        12px -8px 0 0 #fff3c7,
-        -10px -15px 0 -1px #ffd47c,
-        18px -22px 0 -1px #ffe6a0;
-}
+            box-shadow:
+                12px -8px 0 0 #fff3c7,
+                -10px -15px 0 -1px #ffd47c,
+                18px -22px 0 -1px #ffe6a0;
+        }
 
-/* Particle positions */
-.magical-dust::before {
-    left: 25%;
-    top: 50%;
-}
+        /* Particle positions */
+        .magical-dust::before {
+            left: 25%;
+            top: 50%;
+        }
 
-.magical-dust::after {
-    left: 65%;
-    top: 45%;
-}
+        .magical-dust::after {
+            left: 65%;
+            top: 45%;
+        }
 
-/* Desktop: sparkle continuously while hovering */
-@media (hover: hover) {
-    .magical-dust:hover::before,
-    .magical-dust:hover::after {
-        animation: magicalDust 1.5s ease-out infinite;
-    }
+        /* Desktop: sparkle continuously while hovering */
+        @media (hover: hover) {
 
-    .magical-dust:hover::after {
-        animation-delay: 0.2s;
-    }
-}
+            .magical-dust:hover::before,
+            .magical-dust:hover::after {
+                animation: magicalDust 1.5s ease-out infinite;
+            }
 
-/* Keyboard focus */
-.magical-dust:focus-visible::before,
-.magical-dust:focus-visible::after {
-    animation: magicalDust 1.5s ease-out infinite;
-}
+            .magical-dust:hover::after {
+                animation-delay: 0.2s;
+            }
+        }
 
-/* Mobile: sparkle briefly when tapped */
-@media (hover: none) {
-    .magical-dust:active::before,
-    .magical-dust:active::after {
-        animation: magicalDust 0.8s ease-out both;
-    }
-}
+        /* Keyboard focus */
+        .magical-dust:focus-visible::before,
+        .magical-dust:focus-visible::after {
+            animation: magicalDust 1.5s ease-out infinite;
+        }
 
-/* Floating animation */
-@keyframes magicalDust {
-    0% {
-        opacity: 0;
-        transform: translateY(5px) scale(0.5);
-    }
+        /* Mobile: sparkle briefly when tapped */
+        @media (hover: none) {
 
-    25% {
-        opacity: 1;
-    }
+            .magical-dust:active::before,
+            .magical-dust:active::after {
+                animation: magicalDust 0.8s ease-out both;
+            }
+        }
 
-    70% {
-        opacity: 0.8;
-    }
+        /* Floating animation */
+        @keyframes magicalDust {
+            0% {
+                opacity: 0;
+                transform: translateY(5px) scale(0.5);
+            }
 
-    100% {
-        opacity: 0;
-        transform: translateY(-22px) scale(1);
-    }
-}
+            25% {
+                opacity: 1;
+            }
 
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-    .magical-dust::before,
-    .magical-dust::after {
-        animation: none !important;
-    }
-}
+            70% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-22px) scale(1);
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+
+            .magical-dust::before,
+            .magical-dust::after {
+                animation: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -1266,6 +1290,7 @@
         <button class="korean-hotspot magical-dust" type="button" aria-label="Open Korean study"></button>
         <button class="spanish-hotspot magical-dust" type="button" aria-label="Open Spanish study"></button>
         <button class="panama-hotspot breathing-hotspot" type="button" aria-label="Panama Memories"></button>
+        <button class="course-hotspot magical-dust" type="button" aria-label="Open course library"></button>
         <button class="dom-hotspot magical-dust" type="button" aria-label="Open JavaScript and DOM course"></button>
         <div class="cat-eye eye-left"></div>
         <div class="cat-eye eye-right"></div>
@@ -1328,6 +1353,7 @@
         const miniWindowTitle = document.querySelector(".mini-window-title");
         const panama = document.querySelector(".panama-hotspot");
         const domHotspot = document.querySelector(".dom-hotspot");
+        const courseHotspot = document.querySelector(".course-hotspot");
 
 
 
@@ -1383,6 +1409,10 @@
         });
         domHotspot.addEventListener("click", () => {
             openMiniWindow("dom-course.html", "JavaScript + DOM");
+        });
+
+        courseHotspot.addEventListener("click", () => {
+            openMiniWindow("understanding law.html", "Understanding Law");
         });
 
 
